@@ -1,0 +1,58 @@
+\doxysection{Class\+File.\+hpp}
+\hypertarget{_class_file_8hpp_source}{}\label{_class_file_8hpp_source}\index{include/ClassFile.hpp@{include/ClassFile.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CLASS\_FILE\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CLASS\_FILE\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}BasicTypes.hpp"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_class_file_a47669d90346c9fa0db30ae582c74a199}{ClassFile}}\ \{}
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{class_class_file_a47669d90346c9fa0db30ae582c74a199}{ClassFile}}();}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00038\ \ \ \ \ u4\ \mbox{\hyperlink{class_class_file_a09085e9db513dae2f46da6e0a26c1b59}{magic}};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00047\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_af0db7b0ea01cb9cea2cee177ca81df09}{minor\_version}};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00056\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_abede9cb937e65072517d0ee6e26e2757}{major\_version}};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00064\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_ac8fdf5cccfd632da4fdb21ae63fffa7a}{constant\_pool\_count}};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{struct_constant_pool_info}{ConstantPoolInfo}}*\ \mbox{\hyperlink{class_class_file_a963da44ac519eee912c0018eed9f71cf}{constant\_pool}};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00080\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_ae88db578147f7ee0d6fc1aeacb341854}{access\_flags}};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00088\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_a2d33db0a560a71b94bc572dd1e4ec03a}{this\_class}};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00097\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_a5f6c11c0ccb02fd992b5c102725253ec}{super\_class}};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00105\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_a337fcb7da33d1b64631441115c7de305}{interfaces\_count}};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00113\ \ \ \ \ u2*\ \mbox{\hyperlink{class_class_file_af599de97e062c98966470f1590496425}{interfaces}};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00122\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_acea207ee523fbc16611d3cf436c390e0}{fields\_count}};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00131\ \ \ \ \ \mbox{\hyperlink{struct_field_info}{FieldInfo}}*\ \mbox{\hyperlink{class_class_file_add171dc12613ad29ef94f4f18a50f06a}{fields}};}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00140\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_aacfb45d4af64216324b1ae5269c870d5}{methods\_count}};}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00149\ \ \ \ \ \mbox{\hyperlink{struct_method_info}{MethodInfo}}*\ \mbox{\hyperlink{class_class_file_a67e02d50e6807bb97d7d8f265deef9a0}{methods}};}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00158\ \ \ \ \ u2\ \mbox{\hyperlink{class_class_file_a633c696fbe08e7e7906b2ab1e52f3d1b}{attributes\_count}};}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00167\ \ \ \ \ \mbox{\hyperlink{struct_attribute_info}{AttributeInfo}}*\ \mbox{\hyperlink{class_class_file_ad7db56de00dc682671cb8cfb837d92b7}{attributes}};}
+\DoxyCodeLine{00168\ \};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

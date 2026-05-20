@@ -1,0 +1,247 @@
+\doxysection{Class\+File Class Reference}
+\hypertarget{class_class_file}{}\label{class_class_file}\index{ClassFile@{ClassFile}}
+
+
+Represents a Java class file.  
+
+
+
+
+{\ttfamily \#include $<$Class\+File.\+hpp$>$}
+
+
+
+Collaboration diagram for Class\+File\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_class_file__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_class_file_a47669d90346c9fa0db30ae582c74a199}{Class\+File}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor for the \doxylink{class_class_file}{Class\+File} class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+u4 \mbox{\hyperlink{class_class_file_a09085e9db513dae2f46da6e0a26c1b59}{magic}}
+\begin{DoxyCompactList}\small\item\em The magic number of the class file (0x\+CAFEBABE). \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_af0db7b0ea01cb9cea2cee177ca81df09}{minor\+\_\+version}}
+\begin{DoxyCompactList}\small\item\em The minor version of the class file format. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_abede9cb937e65072517d0ee6e26e2757}{major\+\_\+version}}
+\begin{DoxyCompactList}\small\item\em The major version of the class file format. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_ac8fdf5cccfd632da4fdb21ae63fffa7a}{constant\+\_\+pool\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em The number of entries in the constant pool. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_constant_pool_info}{Constant\+Pool\+Info}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_class_file_a963da44ac519eee912c0018eed9f71cf}{constant\+\_\+pool}}
+\begin{DoxyCompactList}\small\item\em A pointer to the array of {\ttfamily \doxylink{struct_constant_pool_info}{Constant\+Pool\+Info}} objects representing the constant pool. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_ae88db578147f7ee0d6fc1aeacb341854}{access\+\_\+flags}}
+\begin{DoxyCompactList}\small\item\em The access flags of the class (e.\+g., public, final, abstract). \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_a2d33db0a560a71b94bc572dd1e4ec03a}{this\+\_\+class}}
+\begin{DoxyCompactList}\small\item\em The index into the constant pool that points to the class\textquotesingle{}s name. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_a5f6c11c0ccb02fd992b5c102725253ec}{super\+\_\+class}}
+\begin{DoxyCompactList}\small\item\em The index into the constant pool that points to the superclass\textquotesingle{}s name. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_a337fcb7da33d1b64631441115c7de305}{interfaces\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em The number of interfaces implemented by the class. \end{DoxyCompactList}\item 
+u2 \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_class_file_af599de97e062c98966470f1590496425}{interfaces}}
+\begin{DoxyCompactList}\small\item\em A pointer to an array of interface indices. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_acea207ee523fbc16611d3cf436c390e0}{fields\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em The number of fields declared by the class. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_field_info}{Field\+Info}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_class_file_add171dc12613ad29ef94f4f18a50f06a}{fields}}
+\begin{DoxyCompactList}\small\item\em A pointer to an array of {\ttfamily \doxylink{struct_field_info}{Field\+Info}} objects. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_aacfb45d4af64216324b1ae5269c870d5}{methods\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em The number of methods declared by the class. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_method_info}{Method\+Info}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_class_file_a67e02d50e6807bb97d7d8f265deef9a0}{methods}}
+\begin{DoxyCompactList}\small\item\em A pointer to an array of {\ttfamily \doxylink{struct_method_info}{Method\+Info}} objects. \end{DoxyCompactList}\item 
+u2 \mbox{\hyperlink{class_class_file_a633c696fbe08e7e7906b2ab1e52f3d1b}{attributes\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em The number of attributes present in the class. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_attribute_info}{Attribute\+Info}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_class_file_ad7db56de00dc682671cb8cfb837d92b7}{attributes}}
+\begin{DoxyCompactList}\small\item\em A pointer to an array of {\ttfamily \doxylink{struct_attribute_info}{Attribute\+Info}} objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a Java class file. 
+
+The {\ttfamily \doxylink{class_class_file}{Class\+File}} class encapsulates the structure of a Java class file as defined by the Java Virtual Machine (JVM) specification. It contains the necessary fields for representing the magic number, version information, constant pool, fields, methods, and attributes. This class is used for reading, parsing, and manipulating class files within a JVM implementation or a class file viewer tool. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_class_file_a47669d90346c9fa0db30ae582c74a199}\index{ClassFile@{ClassFile}!ClassFile@{ClassFile}}
+\index{ClassFile@{ClassFile}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{ClassFile()}{ClassFile()}}
+{\footnotesize\ttfamily \label{class_class_file_a47669d90346c9fa0db30ae582c74a199} 
+Class\+File\+::\+Class\+File (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Default constructor for the \doxylink{class_class_file}{Class\+File} class. 
+
+Initializes all the member variables to default values. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_class_file_ae88db578147f7ee0d6fc1aeacb341854}\index{ClassFile@{ClassFile}!access\_flags@{access\_flags}}
+\index{access\_flags@{access\_flags}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{access\_flags}{access\_flags}}
+{\footnotesize\ttfamily \label{class_class_file_ae88db578147f7ee0d6fc1aeacb341854} 
+u2 Class\+File\+::access\+\_\+flags}
+
+
+
+The access flags of the class (e.\+g., public, final, abstract). 
+
+These flags describe the visibility and other characteristics of the class (e.\+g., whether it\textquotesingle{}s public, final, etc.). \Hypertarget{class_class_file_ad7db56de00dc682671cb8cfb837d92b7}\index{ClassFile@{ClassFile}!attributes@{attributes}}
+\index{attributes@{attributes}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{attributes}{attributes}}
+{\footnotesize\ttfamily \label{class_class_file_ad7db56de00dc682671cb8cfb837d92b7} 
+\mbox{\hyperlink{struct_attribute_info}{Attribute\+Info}}\texorpdfstring{$\ast$}{*} Class\+File\+::attributes}
+
+
+
+A pointer to an array of {\ttfamily \doxylink{struct_attribute_info}{Attribute\+Info}} objects. 
+
+The {\ttfamily attributes} array holds information about the various attributes associated with the class, such as code, exceptions, inner classes, and synthetic attributes. \Hypertarget{class_class_file_a633c696fbe08e7e7906b2ab1e52f3d1b}\index{ClassFile@{ClassFile}!attributes\_count@{attributes\_count}}
+\index{attributes\_count@{attributes\_count}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{attributes\_count}{attributes\_count}}
+{\footnotesize\ttfamily \label{class_class_file_a633c696fbe08e7e7906b2ab1e52f3d1b} 
+u2 Class\+File\+::attributes\+\_\+count}
+
+
+
+The number of attributes present in the class. 
+
+This field indicates how many attributes are associated with the class file, such as source file information, inner class information, code, exceptions, etc. \Hypertarget{class_class_file_a963da44ac519eee912c0018eed9f71cf}\index{ClassFile@{ClassFile}!constant\_pool@{constant\_pool}}
+\index{constant\_pool@{constant\_pool}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{constant\_pool}{constant\_pool}}
+{\footnotesize\ttfamily \label{class_class_file_a963da44ac519eee912c0018eed9f71cf} 
+\mbox{\hyperlink{struct_constant_pool_info}{Constant\+Pool\+Info}}\texorpdfstring{$\ast$}{*} Class\+File\+::constant\+\_\+pool}
+
+
+
+A pointer to the array of {\ttfamily \doxylink{struct_constant_pool_info}{Constant\+Pool\+Info}} objects representing the constant pool. 
+
+The constant pool holds various constant values referenced by the class (e.\+g., strings, class types, field/method references). \Hypertarget{class_class_file_ac8fdf5cccfd632da4fdb21ae63fffa7a}\index{ClassFile@{ClassFile}!constant\_pool\_count@{constant\_pool\_count}}
+\index{constant\_pool\_count@{constant\_pool\_count}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{constant\_pool\_count}{constant\_pool\_count}}
+{\footnotesize\ttfamily \label{class_class_file_ac8fdf5cccfd632da4fdb21ae63fffa7a} 
+u2 Class\+File\+::constant\+\_\+pool\+\_\+count}
+
+
+
+The number of entries in the constant pool. 
+
+The constant pool is a table of constants (e.\+g., strings, class references, method references) used by the class. \Hypertarget{class_class_file_add171dc12613ad29ef94f4f18a50f06a}\index{ClassFile@{ClassFile}!fields@{fields}}
+\index{fields@{fields}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{fields}{fields}}
+{\footnotesize\ttfamily \label{class_class_file_add171dc12613ad29ef94f4f18a50f06a} 
+\mbox{\hyperlink{struct_field_info}{Field\+Info}}\texorpdfstring{$\ast$}{*} Class\+File\+::fields}
+
+
+
+A pointer to an array of {\ttfamily \doxylink{struct_field_info}{Field\+Info}} objects. 
+
+The {\ttfamily fields} array holds detailed information about each field declared in the class, such as its name, type, and access modifiers. \Hypertarget{class_class_file_acea207ee523fbc16611d3cf436c390e0}\index{ClassFile@{ClassFile}!fields\_count@{fields\_count}}
+\index{fields\_count@{fields\_count}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{fields\_count}{fields\_count}}
+{\footnotesize\ttfamily \label{class_class_file_acea207ee523fbc16611d3cf436c390e0} 
+u2 Class\+File\+::fields\+\_\+count}
+
+
+
+The number of fields declared by the class. 
+
+This field represents how many fields (variables) are declared in the class. The {\ttfamily fields} array stores the details of each field. \Hypertarget{class_class_file_af599de97e062c98966470f1590496425}\index{ClassFile@{ClassFile}!interfaces@{interfaces}}
+\index{interfaces@{interfaces}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{interfaces}{interfaces}}
+{\footnotesize\ttfamily \label{class_class_file_af599de97e062c98966470f1590496425} 
+u2\texorpdfstring{$\ast$}{*} Class\+File\+::interfaces}
+
+
+
+A pointer to an array of interface indices. 
+
+The {\ttfamily interfaces} array holds the indices into the constant pool for the interfaces implemented by the class. \Hypertarget{class_class_file_a337fcb7da33d1b64631441115c7de305}\index{ClassFile@{ClassFile}!interfaces\_count@{interfaces\_count}}
+\index{interfaces\_count@{interfaces\_count}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{interfaces\_count}{interfaces\_count}}
+{\footnotesize\ttfamily \label{class_class_file_a337fcb7da33d1b64631441115c7de305} 
+u2 Class\+File\+::interfaces\+\_\+count}
+
+
+
+The number of interfaces implemented by the class. 
+
+This field indicates how many interfaces are implemented by the class. The list of interfaces follows this field. \Hypertarget{class_class_file_a09085e9db513dae2f46da6e0a26c1b59}\index{ClassFile@{ClassFile}!magic@{magic}}
+\index{magic@{magic}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{magic}{magic}}
+{\footnotesize\ttfamily \label{class_class_file_a09085e9db513dae2f46da6e0a26c1b59} 
+u4 Class\+File\+::magic}
+
+
+
+The magic number of the class file (0x\+CAFEBABE). 
+
+The magic number is a constant value at the beginning of the class file, used to identify valid class files. \Hypertarget{class_class_file_abede9cb937e65072517d0ee6e26e2757}\index{ClassFile@{ClassFile}!major\_version@{major\_version}}
+\index{major\_version@{major\_version}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{major\_version}{major\_version}}
+{\footnotesize\ttfamily \label{class_class_file_abede9cb937e65072517d0ee6e26e2757} 
+u2 Class\+File\+::major\+\_\+version}
+
+
+
+The major version of the class file format. 
+
+Represents the major version of the Java class file format. It is used along with the minor version to verify the compatibility of the class file with a particular JVM version. \Hypertarget{class_class_file_a67e02d50e6807bb97d7d8f265deef9a0}\index{ClassFile@{ClassFile}!methods@{methods}}
+\index{methods@{methods}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{methods}{methods}}
+{\footnotesize\ttfamily \label{class_class_file_a67e02d50e6807bb97d7d8f265deef9a0} 
+\mbox{\hyperlink{struct_method_info}{Method\+Info}}\texorpdfstring{$\ast$}{*} Class\+File\+::methods}
+
+
+
+A pointer to an array of {\ttfamily \doxylink{struct_method_info}{Method\+Info}} objects. 
+
+The {\ttfamily methods} array holds detailed information about each method declared in the class, including method names, parameter types, return types, and attributes. \Hypertarget{class_class_file_aacfb45d4af64216324b1ae5269c870d5}\index{ClassFile@{ClassFile}!methods\_count@{methods\_count}}
+\index{methods\_count@{methods\_count}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{methods\_count}{methods\_count}}
+{\footnotesize\ttfamily \label{class_class_file_aacfb45d4af64216324b1ae5269c870d5} 
+u2 Class\+File\+::methods\+\_\+count}
+
+
+
+The number of methods declared by the class. 
+
+This field indicates how many methods are declared in the class. The {\ttfamily methods} array stores the details of each method. \Hypertarget{class_class_file_af0db7b0ea01cb9cea2cee177ca81df09}\index{ClassFile@{ClassFile}!minor\_version@{minor\_version}}
+\index{minor\_version@{minor\_version}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{minor\_version}{minor\_version}}
+{\footnotesize\ttfamily \label{class_class_file_af0db7b0ea01cb9cea2cee177ca81df09} 
+u2 Class\+File\+::minor\+\_\+version}
+
+
+
+The minor version of the class file format. 
+
+Represents the minor version of the Java class file format. Together with the major version, it helps determine compatibility between the class file and the JVM. \Hypertarget{class_class_file_a5f6c11c0ccb02fd992b5c102725253ec}\index{ClassFile@{ClassFile}!super\_class@{super\_class}}
+\index{super\_class@{super\_class}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{super\_class}{super\_class}}
+{\footnotesize\ttfamily \label{class_class_file_a5f6c11c0ccb02fd992b5c102725253ec} 
+u2 Class\+File\+::super\+\_\+class}
+
+
+
+The index into the constant pool that points to the superclass\textquotesingle{}s name. 
+
+Similar to {\ttfamily this\+\_\+class}, this field references the class\textquotesingle{}s superclass in the constant pool. If the class has no superclass (i.\+e., it\textquotesingle{}s the root class {\ttfamily java.\+lang.\+Object}), this field is zero. \Hypertarget{class_class_file_a2d33db0a560a71b94bc572dd1e4ec03a}\index{ClassFile@{ClassFile}!this\_class@{this\_class}}
+\index{this\_class@{this\_class}!ClassFile@{ClassFile}}
+\doxysubsubsection{\texorpdfstring{this\_class}{this\_class}}
+{\footnotesize\ttfamily \label{class_class_file_a2d33db0a560a71b94bc572dd1e4ec03a} 
+u2 Class\+File\+::this\+\_\+class}
+
+
+
+The index into the constant pool that points to the class\textquotesingle{}s name. 
+
+This field stores a reference to the constant pool entry that represents the name of the class. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/Class\+File.\+hpp\item 
+src/Class\+File.\+cpp\end{DoxyCompactItemize}

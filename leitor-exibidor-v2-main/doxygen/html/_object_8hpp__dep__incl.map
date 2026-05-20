@@ -1,0 +1,19 @@
+<map id="include/Object.hpp" name="include/Object.hpp">
+<area shape="rect" id="Node000001" title="Defines the base Object class in a JVM 8 environment." alt="" coords="164,5,293,32"/>
+<area shape="rect" id="Node000002" href="$_array_8hpp_source.html" title=" " alt="" coords="5,229,127,256"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,41,156,59,131,82,106,120,88,162,71,230,65,228,83,160,101,118,127,78,153,55,182,37"/>
+<area shape="rect" id="Node000004" href="$_instance_class_8hpp.html" title="Defines the InstanceClass for representing instances of Java classes in a JVM 8 environment." alt="" coords="141,80,316,107"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="231,48,231,80,226,80,226,48"/>
+<area shape="rect" id="Node000007" href="$_str_object_8hpp_source.html" title=" " alt="" coords="354,155,500,181"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="267,38,330,78,379,117,416,152,413,156,375,121,327,82,264,42"/>
+<area shape="rect" id="Node000003" href="$_operations_8hpp_source.html" title=" " alt="" coords="138,304,292,331"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="107,261,190,301,188,306,105,266"/>
+<area shape="poly" id="edge8_Node000004_Node000003" title=" " alt="" coords="211,120,193,155,187,197,192,239,202,276,212,303,207,305,197,277,187,240,182,197,187,154,206,118"/>
+<area shape="rect" id="Node000005" href="$_frame_8hpp_source.html" title=" " alt="" coords="202,155,330,181"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="244,119,262,153,257,155,240,122"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="257,196,243,230,221,304,216,303,238,228,252,194"/>
+<area shape="rect" id="Node000006" href="$_stack_8hpp_source.html" title=" " alt="" coords="253,229,378,256"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="285,193,309,227,305,230,281,196"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="287,267,234,306,231,301,284,263"/>
+<area shape="poly" id="edge10_Node000007_Node000003" title=" " alt="" coords="424,198,413,229,392,258,370,275,345,288,294,306,292,301,343,283,367,270,388,254,408,226,419,196"/>
+</map>

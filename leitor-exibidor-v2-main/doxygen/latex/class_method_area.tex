@@ -1,0 +1,95 @@
+\doxysection{Method\+Area Class Reference}
+\hypertarget{class_method_area}{}\label{class_method_area}\index{MethodArea@{MethodArea}}
+
+
+Manages class definitions in the JVM runtime.  
+
+
+
+
+{\ttfamily \#include $<$Method\+Area.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_method_area_a79edf80f07f068f918907d8e2a3508b7}\label{class_method_area_a79edf80f07f068f918907d8e2a3508b7} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Method\+Area} ()
+\begin{DoxyCompactList}\small\item\em Destructor for \doxylink{class_method_area}{Method\+Area}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_static_class}{Static\+Class}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_method_area_a30b436713c03ddead574d962b7d4567c}{load\+\_\+class\+\_\+by\+\_\+name}} (const string \&class\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Loads a class by its name. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_static_class}{Static\+Class}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_method_area_a2f9866fee5f31ba142ab695185e6d611}{get\+\_\+class\+\_\+by\+\_\+name}} (const string \&class\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Retrieves a loaded class by its name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_method_area}{Method\+Area}} \& \mbox{\hyperlink{class_method_area_af2a2bb963323dfadce29d196a6883f4f}{get\+\_\+instance}} ()
+\begin{DoxyCompactList}\small\item\em Retrieves the singleton instance of the \doxylink{class_method_area}{Method\+Area}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_method_area_a46b70f054280a2fac628920d05fe0793}\label{class_method_area_a46b70f054280a2fac628920d05fe0793} 
+string {\bfseries class\+\_\+path} = "{}"{}
+\begin{DoxyCompactList}\small\item\em Path to the folder containing the necessary class files for the JVM execution. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Manages class definitions in the JVM runtime. 
+
+This class follows the singleton pattern to provide a single instance responsible for loading and retrieving class definitions at runtime. It maintains a map of class names to their corresponding \doxylink{class_static_class}{Static\+Class} objects. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_method_area_a2f9866fee5f31ba142ab695185e6d611}\index{MethodArea@{MethodArea}!get\_class\_by\_name@{get\_class\_by\_name}}
+\index{get\_class\_by\_name@{get\_class\_by\_name}!MethodArea@{MethodArea}}
+\doxysubsubsection{\texorpdfstring{get\_class\_by\_name()}{get\_class\_by\_name()}}
+{\footnotesize\ttfamily \label{class_method_area_a2f9866fee5f31ba142ab695185e6d611} 
+\mbox{\hyperlink{class_static_class}{Static\+Class}} \texorpdfstring{$\ast$}{*} Method\+Area\+::get\+\_\+class\+\_\+by\+\_\+name (\begin{DoxyParamCaption}\item[{const string \&}]{class\+\_\+name}{}\end{DoxyParamCaption})}
+
+
+
+Retrieves a loaded class by its name. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em class\+\_\+name} & The name of the class. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the \doxylink{class_static_class}{Static\+Class} object, or nullptr if the class is not found. 
+\end{DoxyReturn}
+\Hypertarget{class_method_area_af2a2bb963323dfadce29d196a6883f4f}\index{MethodArea@{MethodArea}!get\_instance@{get\_instance}}
+\index{get\_instance@{get\_instance}!MethodArea@{MethodArea}}
+\doxysubsubsection{\texorpdfstring{get\_instance()}{get\_instance()}}
+{\footnotesize\ttfamily \label{class_method_area_af2a2bb963323dfadce29d196a6883f4f} 
+static \mbox{\hyperlink{class_method_area}{Method\+Area}} \& Method\+Area\+::get\+\_\+instance (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Retrieves the singleton instance of the \doxylink{class_method_area}{Method\+Area}. 
+
+\begin{DoxyReturn}{Returns}
+A reference to the \doxylink{class_method_area}{Method\+Area} instance.
+\end{DoxyReturn}
+Ensures that only one instance of \doxylink{class_method_area}{Method\+Area} exists. \texorpdfstring{$<$}{<} Singleton instance of the \doxylink{class_method_area}{Method\+Area}\Hypertarget{class_method_area_a30b436713c03ddead574d962b7d4567c}\index{MethodArea@{MethodArea}!load\_class\_by\_name@{load\_class\_by\_name}}
+\index{load\_class\_by\_name@{load\_class\_by\_name}!MethodArea@{MethodArea}}
+\doxysubsubsection{\texorpdfstring{load\_class\_by\_name()}{load\_class\_by\_name()}}
+{\footnotesize\ttfamily \label{class_method_area_a30b436713c03ddead574d962b7d4567c} 
+\mbox{\hyperlink{class_static_class}{Static\+Class}} \texorpdfstring{$\ast$}{*} Method\+Area\+::load\+\_\+class\+\_\+by\+\_\+name (\begin{DoxyParamCaption}\item[{const string \&}]{class\+\_\+name}{}\end{DoxyParamCaption})}
+
+
+
+Loads a class by its name. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em class\+\_\+name} & The name of the class to load. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the loaded \doxylink{class_static_class}{Static\+Class} object.
+\end{DoxyReturn}
+If the class is already loaded, it returns the existing instance. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_method_area_8hpp}{Method\+Area.\+hpp}}\item 
+src/Method\+Area.\+cpp\end{DoxyCompactItemize}

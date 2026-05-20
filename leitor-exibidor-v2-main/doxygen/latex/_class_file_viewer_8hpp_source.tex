@@ -1,0 +1,250 @@
+\doxysection{Class\+File\+Viewer.\+hpp}
+\hypertarget{_class_file_viewer_8hpp_source}{}\label{_class_file_viewer_8hpp_source}\index{include/ClassFileViewer.hpp@{include/ClassFileViewer.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CLASS\_FILE\_VIEWER\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CLASS\_FILE\_VIEWER\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}BasicTypes.hpp"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}ClassFile.hpp"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}ClassFileReader.hpp"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <cstdio>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ write\_class\_file(\mbox{\hyperlink{class_class_file}{ClassFile}}*\ class\_file,\ FILE*\ output);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ write\_general\_info(\mbox{\hyperlink{class_class_file}{ClassFile}}*\ class\_file);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{void}\ write\_constant\_pool(\mbox{\hyperlink{class_class_file}{ClassFile}}*\ class\_file);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ write\_interfaces(\mbox{\hyperlink{class_class_file}{ClassFile}}*\ class\_file);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ write\_fields(\mbox{\hyperlink{class_class_file}{ClassFile}}*\ class\_file);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ write\_methods(\mbox{\hyperlink{class_class_file}{ClassFile}}*\ class\_file);}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ write\_attributes(\mbox{\hyperlink{class_class_file}{ClassFile}}*\ class\_file);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{void}\ write\_attribute\_info(\mbox{\hyperlink{struct_attribute_info}{AttributeInfo}}\ attribute\_info,\ uint32\_t\ index,\ \mbox{\hyperlink{struct_constant_pool_info}{ConstantPoolInfo}}*\ constant\_pool,\ uint8\_t\ indentation);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{void}\ write\_file\_bytecode(\mbox{\hyperlink{struct_code_attribute}{CodeAttribute}}\ code\_attribute,\ \mbox{\hyperlink{struct_constant_pool_info}{ConstantPoolInfo}}*\ constant\_pool,\ uint8\_t\ indentation);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ get\_access\_flags(u2\ access\_flags);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00130\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ get\_formatted\_constant(\mbox{\hyperlink{struct_constant_pool_info}{ConstantPoolInfo}}*\ constant\_pool,\ u2\ index);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00138\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\ function\_names\_array[]\ =\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{stringliteral}{"{}nop"{}},}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{stringliteral}{"{}aconst\_null"{}},}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{stringliteral}{"{}iconst\_m1"{}},}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{stringliteral}{"{}iconst\_0"{}},}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{stringliteral}{"{}iconst\_1"{}},}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{stringliteral}{"{}iconst\_2"{}},}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{stringliteral}{"{}iconst\_3"{}},}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{stringliteral}{"{}iconst\_4"{}},}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{stringliteral}{"{}iconst\_5"{}},}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{stringliteral}{"{}lconst\_0"{}},}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{stringliteral}{"{}lconst\_1"{}},}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{stringliteral}{"{}fconst\_0"{}},}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{stringliteral}{"{}fconst\_1"{}},}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{stringliteral}{"{}fconst\_2"{}},}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{stringliteral}{"{}dconst\_0"{}},}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{stringliteral}{"{}dconst\_1"{}},}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{stringliteral}{"{}bipush"{}},}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{stringliteral}{"{}sipush"{}},}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{stringliteral}{"{}ldc"{}},}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{stringliteral}{"{}ldc\_w"{}},}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{stringliteral}{"{}ldc2\_w"{}},}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{stringliteral}{"{}iload"{}},}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{stringliteral}{"{}lload"{}},}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{stringliteral}{"{}fload"{}},}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{stringliteral}{"{}dload"{}},}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{stringliteral}{"{}aload"{}},}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{stringliteral}{"{}iload\_0"{}},}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{stringliteral}{"{}iload\_1"{}},}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{stringliteral}{"{}iload\_2"{}},}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{stringliteral}{"{}iload\_3"{}},}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{stringliteral}{"{}lload\_0"{}},}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{stringliteral}{"{}lload\_1"{}},}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{stringliteral}{"{}lload\_2"{}},}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{stringliteral}{"{}lload\_3"{}},}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{stringliteral}{"{}fload\_0"{}},}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{stringliteral}{"{}fload\_1"{}},}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{stringliteral}{"{}fload\_2"{}},}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{stringliteral}{"{}fload\_3"{}},}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{stringliteral}{"{}dload\_0"{}},}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{stringliteral}{"{}dload\_1"{}},}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{stringliteral}{"{}dload\_2"{}},}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{stringliteral}{"{}dload\_3"{}},}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{stringliteral}{"{}aload\_0"{}},}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{stringliteral}{"{}aload\_1"{}},}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{stringliteral}{"{}aload\_2"{}},}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{stringliteral}{"{}aload\_3"{}},}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{stringliteral}{"{}iaload"{}},}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{stringliteral}{"{}laload"{}},}
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{stringliteral}{"{}faload"{}},}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{stringliteral}{"{}daload"{}},}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{stringliteral}{"{}aaload"{}},}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{stringliteral}{"{}baload"{}},}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{stringliteral}{"{}caload"{}},}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{stringliteral}{"{}saload"{}},}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{stringliteral}{"{}istore"{}},}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{stringliteral}{"{}lstore"{}},}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{stringliteral}{"{}fstore"{}},}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{stringliteral}{"{}dstore"{}},}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{stringliteral}{"{}astore"{}},}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{stringliteral}{"{}istore\_0"{}},}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{stringliteral}{"{}istore\_1"{}},}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{stringliteral}{"{}istore\_2"{}},}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{stringliteral}{"{}istore\_3"{}},}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{stringliteral}{"{}lstore\_0"{}},}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{stringliteral}{"{}lstore\_1"{}},}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{stringliteral}{"{}lstore\_2"{}},}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{stringliteral}{"{}lstore\_3"{}},}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{stringliteral}{"{}fstore\_0"{}},}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{stringliteral}{"{}fstore\_1"{}},}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{stringliteral}{"{}fstore\_2"{}},}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{stringliteral}{"{}fstore\_3"{}},}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{stringliteral}{"{}dstore\_0"{}},}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{stringliteral}{"{}dstore\_1"{}},}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{stringliteral}{"{}dstore\_2"{}},}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{stringliteral}{"{}dstore\_3"{}},}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{stringliteral}{"{}astore\_0"{}},}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{stringliteral}{"{}astore\_1"{}},}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{stringliteral}{"{}astore\_2"{}},}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{stringliteral}{"{}astore\_3"{}},}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{stringliteral}{"{}iastore"{}},}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{stringliteral}{"{}lastore"{}},}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{stringliteral}{"{}fastore"{}},}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{stringliteral}{"{}dastore"{}},}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{stringliteral}{"{}aastore"{}},}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{stringliteral}{"{}bastore"{}},}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{stringliteral}{"{}castore"{}},}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{stringliteral}{"{}sastore"{}},}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{stringliteral}{"{}pop"{}},}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{stringliteral}{"{}pop2"{}},}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{stringliteral}{"{}dup"{}},}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{stringliteral}{"{}dup\_x1"{}},}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{stringliteral}{"{}dup\_x2"{}},}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{stringliteral}{"{}dup2"{}},}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{stringliteral}{"{}dup2\_x1"{}},}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{stringliteral}{"{}dup2\_x2"{}},}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{stringliteral}{"{}swap"{}},}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{stringliteral}{"{}iadd"{}},}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{stringliteral}{"{}ladd"{}},}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{stringliteral}{"{}fadd"{}},}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{stringliteral}{"{}dadd"{}},}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{stringliteral}{"{}isub"{}},}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{stringliteral}{"{}lsub"{}},}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{stringliteral}{"{}fsub"{}},}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{stringliteral}{"{}dsub"{}},}
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{stringliteral}{"{}imul"{}},}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{stringliteral}{"{}lmul"{}},}
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{stringliteral}{"{}fmul"{}},}
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{stringliteral}{"{}dmul"{}},}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{stringliteral}{"{}idiv"{}},}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{stringliteral}{"{}ldiv"{}},}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{stringliteral}{"{}fdiv"{}},}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{stringliteral}{"{}ddiv"{}},}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{stringliteral}{"{}irem"{}},}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{stringliteral}{"{}lrem"{}},}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{stringliteral}{"{}frem"{}},}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{stringliteral}{"{}drem"{}},}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{stringliteral}{"{}ineg"{}},}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{stringliteral}{"{}lneg"{}},}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{stringliteral}{"{}fneg"{}},}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{stringliteral}{"{}dneg"{}},}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{stringliteral}{"{}ishl"{}},}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{stringliteral}{"{}lshl"{}},}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{stringliteral}{"{}ishr"{}},}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{stringliteral}{"{}lshr"{}},}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{stringliteral}{"{}iushr"{}},}
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{stringliteral}{"{}lushr"{}},}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{stringliteral}{"{}iand"{}},}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{stringliteral}{"{}land"{}},}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{stringliteral}{"{}ior"{}},}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{stringliteral}{"{}lor"{}},}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{stringliteral}{"{}ixor"{}},}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{stringliteral}{"{}lxor"{}},}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{stringliteral}{"{}iinc"{}},}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{stringliteral}{"{}i2l"{}},}
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{stringliteral}{"{}i2f"{}},}
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{stringliteral}{"{}i2d"{}},}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{stringliteral}{"{}l2i"{}},}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{stringliteral}{"{}l2f"{}},}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{stringliteral}{"{}l2d"{}},}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{stringliteral}{"{}f2i"{}},}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{stringliteral}{"{}f2l"{}},}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{stringliteral}{"{}f2d"{}},}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{stringliteral}{"{}d2i"{}},}
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{stringliteral}{"{}d2l"{}},}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{stringliteral}{"{}d2f"{}},}
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{stringliteral}{"{}i2b"{}},}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{stringliteral}{"{}i2c"{}},}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{stringliteral}{"{}i2s"{}},}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{stringliteral}{"{}lcmp"{}},}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{stringliteral}{"{}fcmpl"{}},}
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{stringliteral}{"{}fcmpg"{}},}
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{stringliteral}{"{}dcmpl"{}},}
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{stringliteral}{"{}dcmpg"{}},}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{stringliteral}{"{}ifeq"{}},}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{stringliteral}{"{}ifne"{}},}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{stringliteral}{"{}iflt"{}},}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{stringliteral}{"{}ifge"{}},}
+\DoxyCodeLine{00296\ \ \ \ \ \textcolor{stringliteral}{"{}ifgt"{}},}
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{stringliteral}{"{}ifle"{}},}
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{stringliteral}{"{}if\_icmpeq"{}},}
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{stringliteral}{"{}if\_icmpne"{}},}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{stringliteral}{"{}if\_icmplt"{}},}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{stringliteral}{"{}if\_icmpge"{}},}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{stringliteral}{"{}if\_icmpgt"{}},}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{stringliteral}{"{}if\_icmple"{}},}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{stringliteral}{"{}if\_acmpeq"{}},}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{stringliteral}{"{}if\_acmpne"{}},}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{stringliteral}{"{}goto"{}},}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{stringliteral}{"{}jsr"{}},}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{stringliteral}{"{}ret"{}},}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{stringliteral}{"{}tableswitch"{}},}
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{stringliteral}{"{}lookupswitch"{}},}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{stringliteral}{"{}ireturn"{}},}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{stringliteral}{"{}lreturn"{}},}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{stringliteral}{"{}freturn"{}},}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{stringliteral}{"{}dreturn"{}},}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{stringliteral}{"{}areturn"{}},}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{stringliteral}{"{}return"{}},}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{stringliteral}{"{}getstatic"{}},}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{stringliteral}{"{}putstatic"{}},}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{stringliteral}{"{}getfield"{}},}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{stringliteral}{"{}putfield"{}},}
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{stringliteral}{"{}invokevirtual"{}},}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{stringliteral}{"{}invokespecial"{}},}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{stringliteral}{"{}invokestatic"{}},}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{stringliteral}{"{}invokeinterface"{}},}
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{stringliteral}{"{}UNUSED"{}},}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{stringliteral}{"{}new"{}},}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{stringliteral}{"{}newarray"{}},}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{stringliteral}{"{}anewarray"{}},}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{stringliteral}{"{}arraylength"{}},}
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{stringliteral}{"{}athrow"{}},}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{stringliteral}{"{}checkcast"{}},}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{stringliteral}{"{}instanceof"{}},}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{stringliteral}{"{}monitorenter"{}},}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{stringliteral}{"{}monitorexit"{}},}
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{stringliteral}{"{}wide"{}},}
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{stringliteral}{"{}multianewarray"{}},}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{stringliteral}{"{}ifnull"{}},}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{stringliteral}{"{}ifnonnull"{}},}
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{stringliteral}{"{}goto\_w"{}},}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{stringliteral}{"{}jsr\_w"{}}}
+\DoxyCodeLine{00341\ \};}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,5 @@
+<map id="StrObject" name="StrObject">
+<area shape="rect" id="Node000001" title="Represents a Java String object in the JVM." alt="" coords="5,80,82,107"/>
+<area shape="rect" id="Node000002" href="$class_object.html" title="Abstract base class representing a JVM object." alt="" coords="14,5,73,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="46,48,46,80,41,80,41,48"/>
+</map>

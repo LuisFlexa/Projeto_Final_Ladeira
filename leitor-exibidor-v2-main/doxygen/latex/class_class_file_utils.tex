@@ -1,0 +1,188 @@
+\doxysection{Class\+File\+Utils Class Reference}
+\hypertarget{class_class_file_utils}{}\label{class_class_file_utils}\index{ClassFileUtils@{ClassFileUtils}}
+
+
+A utility class that provides static methods for working with class files.  
+
+
+
+
+{\ttfamily \#include $<$Class\+File\+Utils.\+hpp$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \mbox{\hyperlink{class_class_file_utils_aeb36510f3ee9695d7e4c0f347f2d55ab}{check\+\_\+version}} (\mbox{\hyperlink{class_class_file}{Class\+File}} \texorpdfstring{$\ast$}{*}class\+\_\+file)
+\begin{DoxyCompactList}\small\item\em Checks the version of the given class file. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{class_class_file_utils_ab1d4d0a0c45b4d26ae1c506574d7cacd}{compare\+\_\+utf8\+\_\+str}} (\mbox{\hyperlink{struct_const_utf8_info}{Const\+Utf8\+Info}} constant, const char \texorpdfstring{$\ast$}{*}str)
+\begin{DoxyCompactList}\small\item\em Compares a UTF-\/8 constant from the constant pool with a given C-\/string. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{class_class_file_utils_a4be4c94c3220a2199512570f3b741c7e}{file\+\_\+indent}} (FILE \texorpdfstring{$\ast$}{*}out, uint8\+\_\+t n)
+\begin{DoxyCompactList}\small\item\em Adds indentation to the output stream. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{class_class_file_utils_a75e4c52e7183c258f07dd3ce7a9f2c68}{display\+\_\+indent}} (uint8\+\_\+t n)
+\begin{DoxyCompactList}\small\item\em Displays indentation on the standard output. \end{DoxyCompactList}\item 
+static const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_class_file_utils_a78b587bdad72df9606b9670904eaf5d0}{stream\+\_\+to\+\_\+cstring}} (const stringstream \&ss)
+\begin{DoxyCompactList}\small\item\em Converts a stringstream to a C-\/style string. \end{DoxyCompactList}\item 
+static double \mbox{\hyperlink{class_class_file_utils_a6f9c067901c43aaf39539f22b477158f}{verify\+\_\+class\+\_\+version}} (\mbox{\hyperlink{class_class_file}{Class\+File}} \texorpdfstring{$\ast$}{*}class\+\_\+file)
+\begin{DoxyCompactList}\small\item\em Verifies the version of the given class file. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{class_class_file_utils_a9cb77947e3eb03725f6f9ab9e13667b6}{check\+\_\+this\+\_\+class}} (string filename, string classname)
+\begin{DoxyCompactList}\small\item\em Checks if the class file\textquotesingle{}s name matches the expected filename and class name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A utility class that provides static methods for working with class files. 
+
+This class contains various helper methods used to process and analyze class files, such as\+:
+\begin{DoxyItemize}
+\item Checking class file version
+\item Comparing UTF-\/8 strings
+\item Indentation handling for pretty printing
+\item Converting stringstreams to C-\/style strings
+\item Verifying the version of a given class file
+\item Checking if the class matches the given filename and class name 
+\end{DoxyItemize}
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_class_file_utils_a9cb77947e3eb03725f6f9ab9e13667b6}\index{ClassFileUtils@{ClassFileUtils}!check\_this\_class@{check\_this\_class}}
+\index{check\_this\_class@{check\_this\_class}!ClassFileUtils@{ClassFileUtils}}
+\doxysubsubsection{\texorpdfstring{check\_this\_class()}{check\_this\_class()}}
+{\footnotesize\ttfamily \label{class_class_file_utils_a9cb77947e3eb03725f6f9ab9e13667b6} 
+bool Class\+File\+Utils\+::check\+\_\+this\+\_\+class (\begin{DoxyParamCaption}\item[{string}]{filename}{, }\item[{string}]{classname}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Checks if the class file\textquotesingle{}s name matches the expected filename and class name. 
+
+This function compares the class name in the class file with the specified class name and checks if the class file corresponds to the given filename.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The expected filename of the class file. \\
+\hline
+{\em classname} & The expected class name. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the filename and class name match, otherwise false. 
+\end{DoxyReturn}
+\Hypertarget{class_class_file_utils_aeb36510f3ee9695d7e4c0f347f2d55ab}\index{ClassFileUtils@{ClassFileUtils}!check\_version@{check\_version}}
+\index{check\_version@{check\_version}!ClassFileUtils@{ClassFileUtils}}
+\doxysubsubsection{\texorpdfstring{check\_version()}{check\_version()}}
+{\footnotesize\ttfamily \label{class_class_file_utils_aeb36510f3ee9695d7e4c0f347f2d55ab} 
+double Class\+File\+Utils\+::check\+\_\+version (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_class_file}{Class\+File}} \texorpdfstring{$\ast$}{*}}]{class\+\_\+file}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Checks the version of the given class file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em class\+\_\+file} & A pointer to a \doxylink{class_class_file}{Class\+File} structure. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A double representing the version of the class file. 
+\end{DoxyReturn}
+\Hypertarget{class_class_file_utils_ab1d4d0a0c45b4d26ae1c506574d7cacd}\index{ClassFileUtils@{ClassFileUtils}!compare\_utf8\_str@{compare\_utf8\_str}}
+\index{compare\_utf8\_str@{compare\_utf8\_str}!ClassFileUtils@{ClassFileUtils}}
+\doxysubsubsection{\texorpdfstring{compare\_utf8\_str()}{compare\_utf8\_str()}}
+{\footnotesize\ttfamily \label{class_class_file_utils_ab1d4d0a0c45b4d26ae1c506574d7cacd} 
+bool Class\+File\+Utils\+::compare\+\_\+utf8\+\_\+str (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_const_utf8_info}{Const\+Utf8\+Info}}}]{constant}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{str}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Compares a UTF-\/8 constant from the constant pool with a given C-\/string. 
+
+This function compares the string stored in a {\ttfamily \doxylink{struct_const_utf8_info}{Const\+Utf8\+Info}} object to a C-\/style string ({\ttfamily const char\texorpdfstring{$\ast$}{*}}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em constant} & The UTF-\/8 constant from the class file\textquotesingle{}s constant pool. \\
+\hline
+{\em str} & The C-\/style string to compare against. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the strings are equal, otherwise false. 
+\end{DoxyReturn}
+\Hypertarget{class_class_file_utils_a75e4c52e7183c258f07dd3ce7a9f2c68}\index{ClassFileUtils@{ClassFileUtils}!display\_indent@{display\_indent}}
+\index{display\_indent@{display\_indent}!ClassFileUtils@{ClassFileUtils}}
+\doxysubsubsection{\texorpdfstring{display\_indent()}{display\_indent()}}
+{\footnotesize\ttfamily \label{class_class_file_utils_a75e4c52e7183c258f07dd3ce7a9f2c68} 
+static void Class\+File\+Utils\+::display\+\_\+indent (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{n}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Displays indentation on the standard output. 
+
+This function is used for pretty-\/printing class file data to the console. It prints {\ttfamily n} spaces to the standard output.
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The number of spaces to indent. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_class_file_utils_a4be4c94c3220a2199512570f3b741c7e}\index{ClassFileUtils@{ClassFileUtils}!file\_indent@{file\_indent}}
+\index{file\_indent@{file\_indent}!ClassFileUtils@{ClassFileUtils}}
+\doxysubsubsection{\texorpdfstring{file\_indent()}{file\_indent()}}
+{\footnotesize\ttfamily \label{class_class_file_utils_a4be4c94c3220a2199512570f3b741c7e} 
+void Class\+File\+Utils\+::file\+\_\+indent (\begin{DoxyParamCaption}\item[{FILE \texorpdfstring{$\ast$}{*}}]{out}{, }\item[{uint8\+\_\+t}]{n}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Adds indentation to the output stream. 
+
+This function is typically used for pretty-\/printing class file data. It writes {\ttfamily n} spaces to the provided output file.
+
+
+\begin{DoxyParams}{Parameters}
+{\em out} & The file pointer where indentation will be written. \\
+\hline
+{\em n} & The number of spaces to indent. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_class_file_utils_a78b587bdad72df9606b9670904eaf5d0}\index{ClassFileUtils@{ClassFileUtils}!stream\_to\_cstring@{stream\_to\_cstring}}
+\index{stream\_to\_cstring@{stream\_to\_cstring}!ClassFileUtils@{ClassFileUtils}}
+\doxysubsubsection{\texorpdfstring{stream\_to\_cstring()}{stream\_to\_cstring()}}
+{\footnotesize\ttfamily \label{class_class_file_utils_a78b587bdad72df9606b9670904eaf5d0} 
+const char \texorpdfstring{$\ast$}{*} Class\+File\+Utils\+::stream\+\_\+to\+\_\+cstring (\begin{DoxyParamCaption}\item[{const stringstream \&}]{ss}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Converts a stringstream to a C-\/style string. 
+
+This function converts the contents of a {\ttfamily stringstream} object to a null-\/terminated C-\/string.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ss} & The stringstream object containing the string data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A C-\/style string containing the contents of the stringstream. 
+\end{DoxyReturn}
+\Hypertarget{class_class_file_utils_a6f9c067901c43aaf39539f22b477158f}\index{ClassFileUtils@{ClassFileUtils}!verify\_class\_version@{verify\_class\_version}}
+\index{verify\_class\_version@{verify\_class\_version}!ClassFileUtils@{ClassFileUtils}}
+\doxysubsubsection{\texorpdfstring{verify\_class\_version()}{verify\_class\_version()}}
+{\footnotesize\ttfamily \label{class_class_file_utils_a6f9c067901c43aaf39539f22b477158f} 
+double Class\+File\+Utils\+::verify\+\_\+class\+\_\+version (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_class_file}{Class\+File}} \texorpdfstring{$\ast$}{*}}]{class\+\_\+file}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Verifies the version of the given class file. 
+
+This function is similar to {\ttfamily \doxylink{class_class_file_utils_aeb36510f3ee9695d7e4c0f347f2d55ab}{check\+\_\+version()}} but may involve additional checks for ensuring the version\textquotesingle{}s correctness.
+
+
+\begin{DoxyParams}{Parameters}
+{\em class\+\_\+file} & A pointer to a \doxylink{class_class_file}{Class\+File} structure. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A double representing the verified version of the class file. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/Class\+File\+Utils.\+hpp\item 
+src/Class\+File\+Utils.\+cpp\end{DoxyCompactItemize}

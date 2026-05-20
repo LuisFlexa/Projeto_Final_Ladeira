@@ -1,0 +1,52 @@
+\doxysection{Value Struct Reference}
+\hypertarget{struct_value}{}\label{struct_value}\index{Value@{Value}}
+
+
+Collaboration diagram for Value\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=132pt]{struct_value__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_value_a10030024760754da7f94c3117461289b}\label{struct_value_a10030024760754da7f94c3117461289b} 
+Value\+Type {\bfseries print\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Type of value to be printed (e.\+g., formatted output) \end{DoxyCompactList}\item 
+\Hypertarget{struct_value_ab45dfd167290d4324ba4832abcc4064d}\label{struct_value_ab45dfd167290d4324ba4832abcc4064d} 
+Value\+Type {\bfseries type}
+\begin{DoxyCompactList}\small\item\em Actual value type (e.\+g., integer, float, reference) \end{DoxyCompactList}\item 
+\Hypertarget{struct_value_a45bc4239bfe8353af5ba8d3dfaa935f2}\label{struct_value_a45bc4239bfe8353af5ba8d3dfaa935f2} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>bool {\bfseries boolean\_value}\\
+\>\>{\em Boolean value. }\\
+\>int8\_t {\bfseries byte\_value}\\
+\>\>{\em Byte value. }\\
+\>uint8\_t {\bfseries char\_value}\\
+\>\>{\em Character value (in UTF-\/8 encoding) }\\
+\>int16\_t {\bfseries short\_value}\\
+\>\>{\em Short integer value. }\\
+\>int32\_t {\bfseries int\_value}\\
+\>\>{\em Integer value. }\\
+\>float {\bfseries float\_value}\\
+\>\>{\em Float value. }\\
+\>int64\_t {\bfseries long\_value}\\
+\>\>{\em Long integer value. }\\
+\>double {\bfseries double\_value}\\
+\>\>{\em Double precision floating point value. }\\
+\>u4 {\bfseries return\_address}\\
+\>\>{\em Return address (for method calls) }\\
+\>\mbox{\hyperlink{class_object}{Object}} \texorpdfstring{$\ast$}{*} {\bfseries object}\\
+\>\>{\em \doxylink{class_object}{Object} reference (pointer to a Java object) }\\
+\} {\bfseries data}\\
+
+\end{tabbing}\begin{DoxyCompactList}\small\item\em Union holding the actual data of the value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Basic\+Types.\+hpp\end{DoxyCompactItemize}

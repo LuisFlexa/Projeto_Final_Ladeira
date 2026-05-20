@@ -1,0 +1,87 @@
+\doxysection{Frame.\+hpp}
+\hypertarget{_frame_8hpp_source}{}\label{_frame_8hpp_source}\index{include/Frame.hpp@{include/Frame.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Frame.hpp}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ This\ header\ file\ defines\ the\ Frame\ class,\ which\ represents\ a\ stack\ frame\ in\ the\ JVM\ 8\ runtime\ environment.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ A\ Frame\ encapsulates\ execution\ state,\ including\ local\ variables,\ the\ operand\ stack,\ and\ method\ metadata.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Dependencies:}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ -\/\ BasicTypes.hpp:\ Defines\ fundamental\ JVM\ value\ types.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ -\/\ InstanceClass.hpp:\ Represents\ an\ instance\ of\ a\ class.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ -\/\ StaticClass.hpp:\ Represents\ a\ static\ class\ runtime\ structure.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ -\/\ <map>,\ <stack>,\ <vector>:\ Used\ for\ data\ management.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ -\/\ <cassert>,\ <cstdlib>,\ <cstring>,\ <iostream>:\ Standard\ C++\ utilities.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Author:\ [Your\ Name]}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ Date:\ [Date]}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifndef\ FRAME\_HPP}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ FRAME\_HPP}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BasicTypes.hpp"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_instance_class_8hpp}{InstanceClass.hpp}}"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}StaticClass.hpp"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <stack>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_frame_a7c19c94ce25df9578dd15a0f59c5bb0a}{Frame}}\ \{}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{class_frame_a7c19c94ce25df9578dd15a0f59c5bb0a}{Frame}}(\mbox{\hyperlink{class_instance_class}{InstanceClass}}*\ \textcolor{keywordtype}{object},\ \mbox{\hyperlink{class_static_class}{StaticClass}}*\ class\_runtime,\ \textcolor{keywordtype}{string}\ method\_name,\ \textcolor{keywordtype}{string}\ method\_descriptor,\ vector<Value>\ arguments);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{class_frame_a7c19c94ce25df9578dd15a0f59c5bb0a}{Frame}}(\mbox{\hyperlink{class_static_class}{StaticClass}}*\ class\_runtime,\ \textcolor{keywordtype}{string}\ method\_name,\ \textcolor{keywordtype}{string}\ method\_descriptor,\ vector<Value>\ arguments\ =\ vector<Value>());}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{class_frame_abec8c7bccdfc88cb4da137caae9f73d6}{\string~Frame}}();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{struct_constant_pool_info}{ConstantPoolInfo}}**\ \mbox{\hyperlink{class_frame_a7c3d5372d7c1a644e4ecf7f8a3067e74}{get\_constant\_pool}}();}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{struct_value}{Value}}\ \mbox{\hyperlink{class_frame_a9797de74ee225d1c0bcc495d9a4d281f}{get\_local\_variable\_value}}(uint32\_t\ index);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_frame_a59b2e5befc0744af0fb460cb5604cd77}{set\_local\_variable}}(\mbox{\hyperlink{struct_value}{Value}}\ variableValue,\ uint32\_t\ index);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_frame_a2acb682fdcf634a0fe71842f2350dba7}{push\_operand\_stack}}(\mbox{\hyperlink{struct_value}{Value}}\ operand);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{struct_value}{Value}}\ \mbox{\hyperlink{class_frame_ad0de66ded47400267c137871ee3930ea}{pop\_operand\_stack}}();}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00101\ \ \ \ \ stack<Value>\ \mbox{\hyperlink{class_frame_a01ca780a197293b06d4424501abf9fd5}{copy\_operand\_stack}}();}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_frame_a829eecd6abbb6573952d4f1fc48d1b8d}{load\_operand\_stack}}(stack<Value>\ backup);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{class_instance_class}{InstanceClass}}*\ \mbox{\hyperlink{class_frame_a1c8159e0571226d317f1ff1cddc5626a}{get\_object}}();}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00120\ \ \ \ \ u1*\ \mbox{\hyperlink{class_frame_a809611d9de676537a9f6521da830b59e}{get\_code}}(uint32\_t\ address);}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00125\ \ \ \ \ u4\ \mbox{\hyperlink{class_frame_ada6a6cf76d00cbadf43a86a686dd026c}{pc}};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00131\ \ \ \ \ u2\ \mbox{\hyperlink{class_frame_a32d91d612a309702223f2a0293e36964}{get\_local\_variables\_vector\_size}}();}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00137\ \ \ \ \ u4\ \mbox{\hyperlink{class_frame_a5a46754ddee4a984014d4d8539ff55a8}{get\_code\_size}}();}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00147\ \ \ \ \ \mbox{\hyperlink{struct_method_info}{MethodInfo}}*\ obterMethodNamed(\mbox{\hyperlink{class_static_class}{StaticClass}}*\ class\_runtime,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\&\ name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\&\ descriptor);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{void}\ encontrarAttributes();}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \mbox{\hyperlink{class_static_class}{StaticClass}}*\ class\_runtime;\ }
+\DoxyCodeLine{00155\ \ \ \ \ \mbox{\hyperlink{class_instance_class}{InstanceClass}}*\ object;\ }
+\DoxyCodeLine{00156\ \ \ \ \ \mbox{\hyperlink{struct_method_info}{MethodInfo}}\ method;\ }
+\DoxyCodeLine{00157\ \ \ \ \ \mbox{\hyperlink{struct_code_attribute}{CodeAttribute}}*\ code\_attribute;\ }
+\DoxyCodeLine{00158\ \ \ \ \ \mbox{\hyperlink{struct_exceptions_attribute}{ExceptionsAttribute}}*\ exceptions\_attribute;\ }
+\DoxyCodeLine{00159\ \ \ \ \ map<uint32\_t,\ Value>\ local\_variables;\ }
+\DoxyCodeLine{00160\ \ \ \ \ stack<Value>\ operand\_stack;\ }
+\DoxyCodeLine{00161\ \};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ FRAME\_HPP}}
+
+\end{DoxyCode}

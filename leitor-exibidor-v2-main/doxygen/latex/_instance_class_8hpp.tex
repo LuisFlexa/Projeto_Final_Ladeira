@@ -1,0 +1,39 @@
+\doxysection{include/\+Instance\+Class.hpp File Reference}
+\hypertarget{_instance_class_8hpp}{}\label{_instance_class_8hpp}\index{include/InstanceClass.hpp@{include/InstanceClass.hpp}}
+
+
+Defines the \doxylink{class_instance_class}{Instance\+Class} for representing instances of Java classes in a JVM 8 environment.  
+
+
+{\ttfamily \#include "{}Basic\+Types.\+hpp"{}}\newline
+{\ttfamily \#include "{}Object.\+hpp"{}}\newline
+{\ttfamily \#include "{}Static\+Class.\+hpp"{}}\newline
+{\ttfamily \#include $<$cstdlib$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+Include dependency graph for Instance\+Class.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_instance_class_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=242pt]{_instance_class_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_instance_class}{Instance\+Class}}
+\begin{DoxyCompactList}\small\item\em Represents an instance of a Java class in the JVM runtime. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Defines the \doxylink{class_instance_class}{Instance\+Class} for representing instances of Java classes in a JVM 8 environment. 
+
+This class extends \doxylink{class_object}{Object} and serves as a runtime representation of an instance of a Java class. It maintains a reference to its corresponding \doxylink{class_static_class}{Static\+Class} (which represents the class definition) and provides mechanisms for field storage and retrieval. 

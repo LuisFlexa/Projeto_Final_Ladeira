@@ -1,0 +1,51 @@
+\doxysection{Method\+Area.\+hpp}
+\hypertarget{_method_area_8hpp_source}{}\label{_method_area_8hpp_source}\index{include/MethodArea.hpp@{include/MethodArea.hpp}}
+\mbox{\hyperlink{_method_area_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ METHOD\_AREA\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ METHOD\_AREA\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}BasicTypes.hpp"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}StaticClass.hpp"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }MethodArea\ \{}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{static}\ MethodArea\&\ \mbox{\hyperlink{class_method_area_af2a2bb963323dfadce29d196a6883f4f}{get\_instance}}()}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ MethodArea\ instance;\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ instance;}
+\DoxyCodeLine{00045\ \ \ \ \ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{class_method_area_a79edf80f07f068f918907d8e2a3508b7}{\string~MethodArea}}();}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{class_static_class}{StaticClass}}*\ \mbox{\hyperlink{class_method_area_a30b436713c03ddead574d962b7d4567c}{load\_class\_by\_name}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\&\ class\_name);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{class_static_class}{StaticClass}}*\ \mbox{\hyperlink{class_method_area_a2f9866fee5f31ba142ab695185e6d611}{get\_class\_by\_name}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\&\ class\_name);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{string}\ \mbox{\hyperlink{class_method_area_a46b70f054280a2fac628920d05fe0793}{class\_path}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00077\ \ \ \ \ MethodArea();}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00082\ \ \ \ \ MethodArea(MethodArea\ \textcolor{keyword}{const}\&);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{void}\ operator=(MethodArea\ \textcolor{keyword}{const}\&);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{bool}\ insert\_class(\mbox{\hyperlink{class_static_class}{StaticClass}}*\ class\_file);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ map<string,\ StaticClass*>\ classes;\ }
+\DoxyCodeLine{00097\ \};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ METHOD\_AREA\_HPP}}
+
+\end{DoxyCode}
