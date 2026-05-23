@@ -1,4 +1,4 @@
-#include "references.h"
+#include "classfile.h"
 #include "constant_pool.h"
 #include <stdlib.h>
 #include <string.h>

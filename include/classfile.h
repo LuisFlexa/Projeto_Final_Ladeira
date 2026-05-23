@@ -1,7 +1,12 @@
-#ifndef CLASS_FILE_H
-#define CLASS_FILE_H
+#ifndef CLASSFILE_H
+#define CLASSFILE_H
 
-#include "BasicTypes.h"
+#include <stdint.h>
+#include <stdio.h>
+
+typedef uint8_t u1;
+typedef uint16_t u2;
+typedef uint32_t u4;
 
 #define CONSTANT_Utf8               1
 #define CONSTANT_Integer            3
@@ -90,5 +95,8 @@ typedef struct {
     u2 constant_pool_count;
     cp_info *constant_pool;
 } ClassFile;
+
+ClassFile* read_class_file(FILE *fp);
+void free_class_file(ClassFile *cf);
 
 #endif

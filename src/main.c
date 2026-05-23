@@ -1,4 +1,4 @@
-#include "references.h"
+#include "classfile.h"
 #include "printer.h"
 #include <stdio.h>
 #include <string.h>
