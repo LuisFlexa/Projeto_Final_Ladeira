@@ -1,5 +1,5 @@
-#ifndef CLASS_FILE_READER_H
-#define CLASS_FILE_READER_H
+#ifndef REFERENCES_H
+#define REFERENCES_H
 
 #include "ClassFile.h"
 #include <stdio.h>

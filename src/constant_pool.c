@@ -1,42 +1,18 @@
-#include "ClassFileReader.h"
+#include "constant_pool.h"
 #include <stdlib.h>
 #include <string.h>
 
-static u1 read_u1(FILE *fp) {
-    u1 res;
-    if (fread(&res, 1, 1, fp) != 1) return 0;
-    return res;
-}
+// Helper reading declarations from references.c
+u1 read_u1(FILE *fp);
+u2 read_u2(FILE *fp);
+u4 read_u4(FILE *fp);
 
-static u2 read_u2(FILE *fp) {
-    u2 res = 0;
-    res = (read_u1(fp) << 8) | read_u1(fp);
-    return res;
-}
-
-static u4 read_u4(FILE *fp) {
-    u4 res = 0;
-    res = (read_u1(fp) << 24) | (read_u1(fp) << 16) | (read_u1(fp) << 8) | read_u1(fp);
-    return res;
-}
-
-ClassFile* read_class_file(FILE *fp) {
-    ClassFile *cf = (ClassFile*)malloc(sizeof(ClassFile));
-    if (!cf) return NULL;
-    memset(cf, 0, sizeof(ClassFile));
-
-    cf->magic = read_u4(fp);
-    if (cf->magic != 0xCAFEBABE) {
-        printf("Error: Invalid magic number.\n");
-        free(cf);
-        return NULL;
-    }
-
-    cf->minor_version = read_u2(fp);
-    cf->major_version = read_u2(fp);
+int read_constant_pool(ClassFile *cf, FILE *fp) {
     cf->constant_pool_count = read_u2(fp);
-
     cf->constant_pool = (cp_info*)malloc((cf->constant_pool_count) * sizeof(cp_info));
+    if (!cf->constant_pool) return -1;
+    memset(cf->constant_pool, 0, (cf->constant_pool_count) * sizeof(cp_info));
+
     for (int i = 1; i < cf->constant_pool_count; i++) {
         cf->constant_pool[i].tag = read_u1(fp);
         switch (cf->constant_pool[i].tag) {
@@ -67,9 +43,9 @@ ClassFile* read_class_file(FILE *fp) {
             case CONSTANT_Long:
                 cf->constant_pool[i].info.long_info.high_bytes = read_u4(fp);
                 cf->constant_pool[i].info.long_info.low_bytes = read_u4(fp);
-                i++; // Long and Double take 2 entries
+                i++;
                 if(i < cf->constant_pool_count) {
-                     cf->constant_pool[i].tag = 0; // null tag for second part
+                     cf->constant_pool[i].tag = 0; // null tag for second part of Long/Double
                 }
                 break;
             case CONSTANT_Double:
@@ -77,7 +53,7 @@ ClassFile* read_class_file(FILE *fp) {
                 cf->constant_pool[i].info.double_info.low_bytes = read_u4(fp);
                 i++;
                 if(i < cf->constant_pool_count) {
-                     cf->constant_pool[i].tag = 0; // null tag
+                     cf->constant_pool[i].tag = 0; // null tag for second part of Long/Double
                 }
                 break;
             case CONSTANT_NameAndType:
@@ -95,17 +71,16 @@ ClassFile* read_class_file(FILE *fp) {
                 break;
         }
     }
-
-    return cf;
+    return 0;
 }
 
-void free_class_file(ClassFile *cf) {
-    if (!cf) return;
+void free_constant_pool(ClassFile *cf) {
+    if (!cf || !cf->constant_pool) return;
     for (int i = 1; i < cf->constant_pool_count; i++) {
         if (cf->constant_pool[i].tag == CONSTANT_Utf8) {
             free(cf->constant_pool[i].info.utf8_info.bytes);
         }
     }
     free(cf->constant_pool);
-    free(cf);
+    cf->constant_pool = NULL;
 }

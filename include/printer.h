@@ -1,5 +1,5 @@
-#ifndef CLASS_FILE_VIEWER_H
-#define CLASS_FILE_VIEWER_H
+#ifndef PRINTER_H
+#define PRINTER_H
 
 #include "ClassFile.h"
 #include <stdio.h>

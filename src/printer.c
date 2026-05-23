@@ -1,4 +1,4 @@
-#include "ClassFileViewer.h"
+#include "printer.h"
 #include <math.h>
 
 void print_constant_pool_info(ClassFile *cf, u2 index, FILE *out) {
