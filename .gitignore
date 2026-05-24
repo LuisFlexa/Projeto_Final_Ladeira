@@ -1,0 +1,22 @@
+# Build artifacts
+leitor-exibidor-v2-main/obj/
+leitor-exibidor-v2-main/bin
+leitor-exibidor-v2-main/bin.exe
+leitor-exibidor-v2-main/out.txt
+leitor-exibidor-v2-main/output/
+leitor-exibidor-v2-main/baseline/
+leitor-exibidor-v2-main/doxygen/
+
+# C version build artifacts
+leitor-exibidor-c/obj/
+leitor-exibidor-c/bin
+leitor-exibidor-c/bin.exe
+leitor-exibidor-c/output/
+
+# Editor / OS
+*.o
+*.exe
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

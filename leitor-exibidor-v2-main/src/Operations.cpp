@@ -3041,7 +3041,7 @@ void Operations::tableswitch()
     int32_t offsets = highbytes - lowbytes + 1;
     bool matched = false;
     for (i = 0; i < (unsigned)offsets; i++) {
-        if ((unsigned)key == (unsigned)lowbytes) {
+        if (key == (int32_t)lowbytes) {
             int32_t offset = (code[baseIndex] << 24) | (code[baseIndex + 1] << 16) | (code[baseIndex + 2] << 8) | code[baseIndex + 3];
             top_frame->pc += offset;
             matched = true;
@@ -3295,15 +3295,15 @@ void Operations::putstatic()
             break;
         case 'C':
             topValue.type = ValueType::CHAR;
-            topValue.type = ValueType::CHAR;
+            topValue.print_type = ValueType::CHAR;
             break;
         case 'S':
             topValue.type = ValueType::SHORT;
-            topValue.type = ValueType::SHORT;
+            topValue.print_type = ValueType::SHORT;
             break;
         case 'Z':
             topValue.type = ValueType::BOOLEAN;
-            topValue.type = ValueType::BOOLEAN;
+            topValue.print_type = ValueType::BOOLEAN;
             break;
         }
     }

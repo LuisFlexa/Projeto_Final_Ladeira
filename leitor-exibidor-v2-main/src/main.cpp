@@ -17,7 +17,8 @@ int main(int argc, char* argv[])
         return -1;
     FILE* fptr = fopen(params.class_file_path, "rb");
     if (fptr == NULL) {
-        cerr << "Could not find file at \"" << params.class_file_path << "\"";
+        cerr << "Could not find file at \"" << params.class_file_path << "\"" << endl;
+        return -1;
     }
     if (params.execute) {
         // Carregamento da classe de entrada.

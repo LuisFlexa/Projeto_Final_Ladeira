@@ -358,6 +358,32 @@ void write_file_bytecode(CodeAttribute code_attribute, ConstantPoolInfo* constan
             fprintf(out, " #%d <%s> count %d\n", number, get_formatted_constant(constant_pool, number), *(current_ptr + 3));
             assert(*(current_ptr + 4) == 0);
             current_ptr += 5;
+        } else if (*current_ptr == 0xaa) {
+            // tableswitch: alinha em 4 bytes a partir do início do código
+            u4 pad = (4 - (offset + 1) % 4) % 4;
+            int32_t def_offset = ((int32_t)*(current_ptr + pad + 1) << 24) | (*(current_ptr + pad + 2) << 16) | (*(current_ptr + pad + 3) << 8) | *(current_ptr + pad + 4);
+            int32_t low = ((int32_t)*(current_ptr + pad + 5) << 24) | (*(current_ptr + pad + 6) << 16) | (*(current_ptr + pad + 7) << 8) | *(current_ptr + pad + 8);
+            int32_t high = ((int32_t)*(current_ptr + pad + 9) << 24) | (*(current_ptr + pad + 10) << 16) | (*(current_ptr + pad + 11) << 8) | *(current_ptr + pad + 12);
+            fprintf(out, " default:%+d low:%d high:%d\n", def_offset, low, high);
+            for (int32_t k = 0; k <= high - low; k++) {
+                int32_t jmp = ((int32_t)*(current_ptr + pad + 13 + k * 4) << 24) | (*(current_ptr + pad + 14 + k * 4) << 16) | (*(current_ptr + pad + 15 + k * 4) << 8) | *(current_ptr + pad + 16 + k * 4);
+                ClassFileUtils::file_indent(out, indentation);
+                fprintf(out, "\t\tcase %d: %+d\n", low + k, jmp);
+            }
+            current_ptr += 1 + pad + 4 + 4 + 4 + (high - low + 1) * 4;
+        } else if (*current_ptr == 0xab) {
+            // lookupswitch: alinha em 4 bytes
+            u4 pad = (4 - (offset + 1) % 4) % 4;
+            int32_t def_offset = ((int32_t)*(current_ptr + pad + 1) << 24) | (*(current_ptr + pad + 2) << 16) | (*(current_ptr + pad + 3) << 8) | *(current_ptr + pad + 4);
+            int32_t npairs = ((int32_t)*(current_ptr + pad + 5) << 24) | (*(current_ptr + pad + 6) << 16) | (*(current_ptr + pad + 7) << 8) | *(current_ptr + pad + 8);
+            fprintf(out, " default:%+d npairs:%d\n", def_offset, npairs);
+            for (int32_t k = 0; k < npairs; k++) {
+                int32_t match = ((int32_t)*(current_ptr + pad + 9 + k * 8) << 24) | (*(current_ptr + pad + 10 + k * 8) << 16) | (*(current_ptr + pad + 11 + k * 8) << 8) | *(current_ptr + pad + 12 + k * 8);
+                int32_t jmp = ((int32_t)*(current_ptr + pad + 13 + k * 8) << 24) | (*(current_ptr + pad + 14 + k * 8) << 16) | (*(current_ptr + pad + 15 + k * 8) << 8) | *(current_ptr + pad + 16 + k * 8);
+                ClassFileUtils::file_indent(out, indentation);
+                fprintf(out, "\t\tmatch %d: %+d\n", match, jmp);
+            }
+            current_ptr += 1 + pad + 4 + 4 + npairs * 8;
         } else if (*current_ptr == 0xc8 || *current_ptr == 0xc9) {
             int32_t number = (*(current_ptr + 1) << 24) | (*(current_ptr + 2) << 16) | (*(current_ptr + 3) << 8) | *(current_ptr + 4);
             fprintf(out, " %d (%+d)\n", offset + number, number);
