@@ -7,7 +7,7 @@
  * do pool, FieldInfo, MethodInfo, AttributeInfo e seus parentes.
  *
  * Tudo o que precisa montar ou interpretar um arquivo .class
- * (leitor, exibidor, executor) inclui este header.
+ * (leitor, exibidor) inclui este header.
  */
 #ifndef TIPOS_BASICOS_HPP
 #define TIPOS_BASICOS_HPP
@@ -22,35 +22,8 @@ typedef uint16_t u2;
 typedef uint32_t u4;
 
 /* ---------------------------------------------------------------------------
- * Discriminantes
- * -------------------------------------------------------------------------*/
-enum ObjectType {
-    CLASS_INSTANCE,
-    STRING_INSTANCE,
-    ARRAY
-};
-typedef enum ObjectType ObjectType;
-
-enum ValueType {
-    BOOLEAN,
-    BYTE,
-    CHAR,
-    SHORT,
-    INT,
-    FLOAT,
-    LONG,
-    DOUBLE,
-    RETURN_ADDR,
-    REFERENCE,
-    PADDING
-};
-typedef enum ValueType ValueType;
-
-/* ---------------------------------------------------------------------------
  * Forward declarations
  * -------------------------------------------------------------------------*/
-class ObjetoBase;
-struct Value;
 struct ConstantPoolInfo;
 struct ConstClassInfo;
 struct ConstFieldRefInfo;
@@ -81,31 +54,7 @@ struct DeprecatedAttribute;
 struct MethodInfo;
 
 /* ---------------------------------------------------------------------------
- * Value: celula generica usada na pilha de operandos e em variaveis locais.
- * `print_type` preserva o tipo de origem do dado para fins de exibicao
- * (por exemplo, BYTE empurrado por bipush mantem BYTE mesmo armazenado
- * em int_value); `type` indica em qual campo da uniao o dado vive.
- * -------------------------------------------------------------------------*/
-struct Value {
-    ValueType print_type;
-    ValueType type;
-    union {
-        bool      boolean_value;
-        int8_t    byte_value;
-        uint8_t   char_value;
-        int16_t   short_value;
-        int32_t   int_value;
-        float     float_value;
-        int64_t   long_value;
-        double    double_value;
-        u4        return_address;
-        ObjetoBase* object;
-    } data;
-};
-typedef struct Value Value;
-
-/* ---------------------------------------------------------------------------
- * Aliases de struct (necessarios em C, mantidos por compatibilidade)
+ * Aliases de struct (mantidos por compatibilidade)
  * -------------------------------------------------------------------------*/
 typedef struct ConstantPoolInfo ConstantPoolInfo;
 typedef struct ConstClassInfo ConstClassInfo;

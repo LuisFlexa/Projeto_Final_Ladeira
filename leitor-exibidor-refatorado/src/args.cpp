@@ -1,6 +1,6 @@
 /*
  * args.cpp -- analise de argumentos CLI.
- * Aceita as flags -r= -o= -e= em qualquer ordem.
+ * Aceita as flags -r= e -o= em qualquer ordem.
  */
 #include "args.hpp"
 #include <iostream>
@@ -20,18 +20,12 @@ const Parameters analisar_args(int argc, char* argv[])
     Parameters params;
     params.class_file_path  = nullptr;
     params.output_file_path = nullptr;
-    params.execute          = false;
 
     for (int i = 1; i < argc; ++i) {
         const char* arg = argv[i];
         const char* v;
 
         if ((v = extrair_valor(arg, "-r=", 3)) != nullptr) {
-            params.execute         = false;
-            params.class_file_path = const_cast<char*>(v);
-        }
-        else if ((v = extrair_valor(arg, "-e=", 3)) != nullptr) {
-            params.execute         = true;
             params.class_file_path = const_cast<char*>(v);
         }
         else if ((v = extrair_valor(arg, "-o=", 3)) != nullptr) {
@@ -43,13 +37,9 @@ const Parameters analisar_args(int argc, char* argv[])
 
 bool validar_parametros(const Parameters* params)
 {
-    bool faltou_classe = !params->class_file_path;
-    bool faltou_saida_p_leitor = !params->execute && !params->output_file_path;
-
-    if (faltou_classe || faltou_saida_p_leitor) {
+    if (!params->class_file_path || !params->output_file_path) {
         cerr << "Uso:\n"
-             << "  Leitor/Exibidor:  bin -r=caminho/Classe.class -o=saida.txt\n"
-             << "  Executor:         bin -e=caminho/Classe.class\n";
+             << "  bin -r=caminho/Classe.class -o=saida.txt\n";
         return false;
     }
     return true;

@@ -1,4 +1,4 @@
-# Makefile - leitor-exibidor refatorado
+# Makefile - leitor-exibidor JVM 8
 #
 # Alvos:
 #   make           gera o binario "bin"
@@ -6,7 +6,8 @@
 #   make clean     remove obj/ e bin
 #   make run       compila e roda sem argumentos (mostra uso)
 #
-# Toolchain: g++ (testado com gcc 15.2 do MSYS2/mingw64).
+# Toolchain: g++ com suporte a C++14
+# (testado com gcc 15.2 do MSYS2/mingw64 em Windows).
 
 # No MSYS2/Windows o GCC pode tentar criar arquivos temporarios em
 # C:\Windows e falhar com "Permission denied". Forcamos TMP/TEMP para
@@ -27,7 +28,18 @@ WARN      := -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable
 EXTRA     := -std=c++14 -fdiagnostics-color=always
 CXXFLAGS  := $(OPT) $(WARN) $(EXTRA) -I$(DIR_INC)
 
-FONTES    := $(wildcard $(DIR_SRC)/*.cpp)
+# Fontes (em ordem de dependencia conceitual):
+#   util_classe       helpers compartilhados
+#   args              parser de CLI
+#   leitor_classe     parser binario do .class
+#   exibidor_classe   emissor textual estilo jclasslib
+#   main              entrada
+FONTES    := \
+    $(DIR_SRC)/util_classe.cpp \
+    $(DIR_SRC)/args.cpp \
+    $(DIR_SRC)/leitor_classe.cpp \
+    $(DIR_SRC)/exibidor_classe.cpp \
+    $(DIR_SRC)/main.cpp
 OBJETOS   := $(patsubst $(DIR_SRC)/%.cpp, $(DIR_OBJ)/%.o, $(FONTES))
 
 .PHONY: all debug clean run
