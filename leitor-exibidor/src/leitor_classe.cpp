@@ -1,11 +1,38 @@
 /*
  * leitor_classe.cpp
- * Implementacao do parser de .class
+ * ------------------------------------------------------------------
+ * Implementacao do parser de arquivos .class (Java SE 1.8 / major 52).
  *
- * A ordem das chamadas em ler_arquivo() segue exatamente a ordem em
- * que os campos aparecem no formato binario. As funcoes ler_const_*
- * e ler_attr_* leem uma entrada por vez; o caller (ler_pool_constantes,
- * ler_atributo) faz o despacho pelo tag/nome.
+ * O formato binario do .class esta definido na JVM Spec, capitulo 4.
+ * A estrutura no disco e' rigorosamente sequencial e big-endian:
+ *
+ *   ClassFile {
+ *     u4 magic;                 // 0xCAFEBABE
+ *     u2 minor_version;
+ *     u2 major_version;
+ *     u2 constant_pool_count;
+ *     cp_info constant_pool[constant_pool_count - 1];   // 1-indexado!
+ *     u2 access_flags;
+ *     u2 this_class;
+ *     u2 super_class;
+ *     u2 interfaces_count;
+ *     u2 interfaces[interfaces_count];
+ *     u2 fields_count;
+ *     field_info fields[fields_count];
+ *     u2 methods_count;
+ *     method_info methods[methods_count];
+ *     u2 attributes_count;
+ *     attribute_info attributes[attributes_count];
+ *   }
+ *
+ * A ordem das chamadas em ler_arquivo() reflete exatamente essa ordem.
+ * As funcoes ler_const_* leem UMA entrada do pool por vez; o caller
+ * (ler_pool_constantes) faz o despacho pelo tag. As funcoes ler_attr_*
+ * sao similares, e o despacho ali e' feito por NOME (string UTF-8 do
+ * pool), nao por tag - ver ler_atributo().
+ *
+ * Convencao de tipos basicos (definida em tipos_basicos.hpp):
+ *   u1 = uint8_t, u2 = uint16_t, u4 = uint32_t.
  */
 #include "leitor_classe.hpp"
 #include "util_classe.hpp"
@@ -14,13 +41,21 @@
 #include <cstring>
 #include <iostream>
 
+/* Construtor: detecta a endianness da maquina hospedeira uma unica
+ * vez na construcao. O resultado e' usado pelas funcoes ler_u2/u4
+ * para decidir se precisam fazer byte-swap dos bytes lidos.
+ * Como o .class spec garante BIG-ENDIAN, em maquinas x86/x64 (LE)
+ * temos sempre que reverter; em hardware BE (raro hoje), basta
+ * um fread direto. */
 LeitorClasse::LeitorClasse()
     : maquina_little_endian(host_little_endian())
 {
 }
 
-/* Pequeno truque: olha o byte mais baixo de um int=1.
- * Se for 1, estamos em little-endian. */
+/* Pequeno truque classico: pega o endereco de um int=1 e olha o
+ * primeiro byte. Em little-endian o byte menos significativo (1)
+ * vem primeiro, entao *char == 1. Em big-endian o byte mais
+ * significativo (0) vem primeiro, entao *char == 0. */
 bool LeitorClasse::host_little_endian()
 {
     int n = 1;
@@ -29,11 +64,20 @@ bool LeitorClasse::host_little_endian()
 
 /* -------------------------------------------------------------------------
  * Entrada principal
+ *
+ * Le um .class inteiro do FILE* aberto e retorna um ArquivoClasse*
+ * preenchido. A funcao falha (std::exit) se o arquivo nao for um
+ * .class valido ou se a versao for incompativel.
+ *
+ * O fluxo segue exatamente a ordem do formato binario - cada
+ * chamada le um bloco consecutivo de bytes da posicao atual do fp.
  * -----------------------------------------------------------------------*/
 ArquivoClasse* LeitorClasse::ler_arquivo(FILE* fp)
 {
     ArquivoClasse* arq = new ArquivoClasse();
 
+    /* 1) Magic number: 4 bytes que devem ser 0xCAFEBABE.
+     *    Se nao for, o arquivo nao e' um .class - aborta. */
     ler_magic(fp, arq);
     if (!magic_valido(arq)) {
         std::cerr << "Invalid file format!\n"
@@ -42,6 +86,9 @@ ArquivoClasse* LeitorClasse::ler_arquivo(FILE* fp)
         std::exit(3);
     }
 
+    /* 2) Versoes: minor (u2) seguido de major (u2).
+     *    Major <= 52 corresponde a Java SE 8 ou inferior - so esses
+     *    sao suportados por este leitor. */
     ler_versoes(fp, arq);
     if (!versao_permitida(arq, 45)) {
         double mv = UtilClasse::versao_para_msg_erro(arq);
@@ -53,17 +100,28 @@ ArquivoClasse* LeitorClasse::ler_arquivo(FILE* fp)
         }
     }
 
+    /* 3) Constant Pool: primeiro o tamanho (u2), depois as entradas. */
     ler_pool_count(fp, arq);
     ler_pool_constantes(fp, arq);
+
+    /* 4) Cabecalho da classe: flags + indices p/ this/super class. */
     ler_flags_acesso(fp, arq);
     ler_this_class(fp, arq);
     ler_super_class(fp, arq);
+
+    /* 5) Interfaces implementadas: contador + array de indices. */
     ler_qtd_interfaces(fp, arq);
     ler_interfaces(fp, arq);
+
+    /* 6) Campos (variaveis de classe e de instancia). */
     ler_qtd_campos(fp, arq);
     ler_campos(fp, arq);
+
+    /* 7) Metodos (incluindo o construtor <init> e <clinit>). */
     ler_qtd_metodos(fp, arq);
     ler_metodos(fp, arq);
+
+    /* 8) Atributos top-level da classe (SourceFile, InnerClasses, ...) */
     ler_qtd_atributos(fp, arq);
     ler_atributos(fp, arq);
 
@@ -72,9 +130,17 @@ ArquivoClasse* LeitorClasse::ler_arquivo(FILE* fp)
 
 /* -------------------------------------------------------------------------
  * IO bruto
+ *
+ * Tres primitivas para ler inteiros sem sinal de 1, 2 e 4 bytes
+ * em big-endian (que e' o formato do .class por especificacao).
+ *
+ * Em hardware little-endian, ler dois ou quatro bytes direto com
+ * fread() produziria o valor com os bytes invertidos - por isso
+ * lemos byte a byte e re-empilhamos com shifts manuais.
  * -----------------------------------------------------------------------*/
 u1 LeitorClasse::ler_u1(FILE* fp)
 {
+    /* 1 byte: nao precisa de byte-swap, le direto. */
     u1 b = 0;
     std::fread(&b, sizeof(u1), 1, fp);
     return b;
@@ -82,8 +148,9 @@ u1 LeitorClasse::ler_u1(FILE* fp)
 
 u2 LeitorClasse::ler_u2(FILE* fp)
 {
-    /* Spec sempre Big-Endian. Se a maquina e' LE precisamos montar
-     * byte a byte; se ja' for BE basta um fread direto. */
+    /* Spec e' sempre Big-Endian. Se a maquina e' LE precisamos
+     * montar byte a byte (high byte primeiro); se ja' for BE basta
+     * um fread direto. */
     if (maquina_little_endian) {
         u2 hi = ler_u1(fp);
         u2 lo = ler_u1(fp);
@@ -96,6 +163,8 @@ u2 LeitorClasse::ler_u2(FILE* fp)
 
 u4 LeitorClasse::ler_u4(FILE* fp)
 {
+    /* Mesma logica de ler_u2, mas com 4 bytes. b1 e' o mais
+     * significativo (vem primeiro no stream). */
     if (maquina_little_endian) {
         u4 b1 = ler_u1(fp);
         u4 b2 = ler_u1(fp);
@@ -142,13 +211,19 @@ void LeitorClasse::ler_pool_count(FILE* fp, ArquivoClasse* arq)
 
 void LeitorClasse::ler_pool_constantes(FILE* fp, ArquivoClasse* arq)
 {
-    /* O pool e' 1-indexado e tem (count-1) entradas reais. */
+    /* O constant_pool_count e' um valor "off-by-one" classico do .class:
+     * se o pool tem N entradas reais, o count vale N+1 (a entrada 0 e'
+     * sempre reservada/invalida na spec). Por isso lemos (count - 1)
+     * entradas e armazenamos zero-indexadas internamente. Todo acesso
+     * por indice externo precisa subtrair 1 (ver buscar_utf8). */
     u2 n = arq->constant_pool_count - 1;
     arq->constant_pool = static_cast<ConstantPoolInfo*>(
         std::malloc(sizeof(ConstantPoolInfo) * n));
 
     ConstantPoolInfo* cur = arq->constant_pool;
     for (u2 i = 0; i < n; ++i, ++cur) {
+        /* Cada entrada comeca por um tag (u1) que define o tipo da
+         * estrutura cp_info que vem em seguida. Despachamos pela tag. */
         cur->tag = ler_u1(fp);
         switch (cur->tag) {
             case ConstClass:
@@ -174,7 +249,9 @@ void LeitorClasse::ler_pool_constantes(FILE* fp, ArquivoClasse* arq)
                 break;
             case ConstLong:
                 cur->info.long_info = ler_const_long(fp);
-                /* Long/Double ocupam 2 slots: o seguinte e' invalido */
+                /* Quirk da spec: Long e Double ocupam DOIS slots no pool.
+                 * O slot seguinte e' marcado como invalido (ConstNull)
+                 * para que os indices subsequentes batam com o esperado. */
                 (++cur)->tag = ConstNull;
                 ++i;
                 break;
@@ -274,6 +351,11 @@ ConstNameTypeInfo LeitorClasse::ler_const_name_type(FILE* fp)
 
 ConstUtf8Info LeitorClasse::ler_const_utf8(FILE* fp)
 {
+    /* CONSTANT_Utf8: u2 length, seguido de `length` bytes.
+     * NAO e' UTF-8 canonico, e' "modified UTF-8" (codifica '\0' e
+     * caracteres BMP de forma especial). Para fins de impressao
+     * simples basta ler como sequencia de bytes; ver
+     * formatar_constante() no exibidor para o filtro de printable. */
     ConstUtf8Info c;
     c.length = ler_u2(fp);
     c.bytes  = static_cast<u1*>(std::malloc(sizeof(u1) * c.length));
@@ -321,6 +403,13 @@ void LeitorClasse::ler_qtd_campos(FILE* fp, ArquivoClasse* arq)
 
 void LeitorClasse::ler_campos(FILE* fp, ArquivoClasse* arq)
 {
+    /* Cada field_info na spec:
+     *   u2 access_flags
+     *   u2 name_index       -> aponta p/ Utf8 no pool (nome do campo)
+     *   u2 descriptor_index -> aponta p/ Utf8 (descritor de tipo, ex "I")
+     *   u2 attributes_count
+     *   attribute_info attributes[attributes_count]   (ex.: ConstantValue)
+     */
     arq->fields = static_cast<FieldInfo*>(std::malloc(sizeof(FieldInfo) * arq->fields_count));
     for (u2 i = 0; i < arq->fields_count; ++i) {
         FieldInfo f;
@@ -366,6 +455,9 @@ void LeitorClasse::ler_qtd_atributos(FILE* fp, ArquivoClasse* arq)
 
 void LeitorClasse::ler_atributos(FILE* fp, ArquivoClasse* arq)
 {
+    /* Le os atributos top-level da classe (ex: SourceFile, InnerClasses,
+     * Deprecated). Atributos dentro de field/method/Code sao lidos pelas
+     * proprias rotinas via ler_atributo(). */
     arq->attributes = static_cast<AttributeInfo*>(
         std::malloc(sizeof(AttributeInfo) * arq->attributes_count));
     for (u2 i = 0; i < arq->attributes_count; ++i) {
@@ -375,7 +467,15 @@ void LeitorClasse::ler_atributos(FILE* fp, ArquivoClasse* arq)
 
 /* -------------------------------------------------------------------------
  * Atributos
+ *
+ * Atributo tem cabecalho generico (name_index + length) e payload
+ * variavel. O dispatch e' feito por NOME (string UTF-8 do pool):
+ * "Code", "ConstantValue", "Exceptions", etc.
  * -----------------------------------------------------------------------*/
+
+/* Busca uma entrada Utf8 do pool a partir do indice 1-based usado
+ * no .class. Subtrai 1 para acessar o array interno e valida com
+ * assert que a tag realmente e' Utf8 (deve ser garantido pela spec). */
 ConstUtf8Info LeitorClasse::buscar_utf8(u2 index, ArquivoClasse* arq)
 {
     ConstantPoolInfo c = arq->constant_pool[index - 1];
@@ -400,31 +500,96 @@ ExceptionTable LeitorClasse::ler_exception_entry(FILE* fp)
     return e;
 }
 
+/*
+ * ler_attr_code
+ * -------------
+ * Decodifica o atributo "Code" de um metodo. E' o atributo mais
+ * complexo do .class porque carrega o bytecode propriamente dito,
+ * a tabela de excecoes (try/catch) e ainda outros sub-atributos
+ * aninhados (LineNumberTable, LocalVariableTable, StackMapTable...).
+ *
+ * Formato binario (JVM Spec 4.7.3):
+ *
+ *   Code_attribute {
+ *     u2 attribute_name_index;   <-- ja lido por ler_atributo()
+ *     u4 attribute_length;       <-- ja lido por ler_atributo()
+ *     u2 max_stack;
+ *     u2 max_locals;
+ *     u4 code_length;
+ *     u1 code[code_length];
+ *     u2 exception_table_length;
+ *     {  u2 start_pc;
+ *        u2 end_pc;
+ *        u2 handler_pc;
+ *        u2 catch_type;
+ *     } exception_table[exception_table_length];
+ *     u2 attributes_count;
+ *     attribute_info attributes[attributes_count];
+ *   }
+ */
 CodeAttribute LeitorClasse::ler_attr_code(FILE* fp, ArquivoClasse* arq)
 {
     CodeAttribute c;
+
+    /* Passo 1 - max_stack (u2): profundidade maxima da pilha de
+     * operandos durante a execucao deste metodo. O verificador da
+     * JVM usa isso para dimensionar o stack do frame. */
     c.max_stack   = ler_u2(fp);
+
+    /* Passo 2 - max_locals (u2): quantos slots de variavel local
+     * o metodo usa, incluindo "this" (em metodos de instancia) e
+     * os parametros. long/double consomem 2 slots cada. */
     c.max_locals  = ler_u2(fp);
+
+    /* Passo 3 - code_length (u4): tamanho em BYTES do array de
+     * bytecode que vem a seguir. A spec garante > 0 e < 65536. */
     c.code_length = ler_u4(fp);
 
+    /* Passo 4 - alocar o buffer de bytecode e ler os bytes brutos
+     * um a um. Nao decodificamos opcodes aqui; isso e' tarefa do
+     * exibidor (escrever_bytecode) ou do executor (Operations).
+     * Cada byte e' u1; sem byte-swap porque sao bytes individuais. */
     c.code = static_cast<u1*>(std::malloc(sizeof(u1) * c.code_length));
     for (u4 i = 0; i < c.code_length; ++i) {
         c.code[i] = ler_u1(fp);
     }
 
+    /* Passo 5 - exception_table_length (u2): quantas entradas de
+     * tratamento de excecao seguem. Cada entrada representa um
+     * bloco try/catch do codigo Java original. */
     c.exception_table_length = ler_u2(fp);
+
+    /* Passo 6 - alocar e ler cada exception_table entry. Estrutura
+     * de cada uma (ver ler_exception_entry):
+     *   start_pc   = PC inicial do bloco protegido (try {...)
+     *   end_pc     = PC final (exclusivo) do bloco protegido
+     *   handler_pc = PC para onde saltar ao capturar a excecao
+     *   catch_type = indice no pool p/ classe da excecao (0 = "any") */
     c.exception_table = static_cast<ExceptionTable*>(
         std::malloc(sizeof(ExceptionTable) * c.exception_table_length));
     for (u2 i = 0; i < c.exception_table_length; ++i) {
         c.exception_table[i] = ler_exception_entry(fp);
     }
 
+    /* Passo 7 - attributes_count (u2): numero de sub-atributos do
+     * Code (atributos aninhados). Os tipicos sao:
+     *   - LineNumberTable     (mapa bytecode -> linha do .java)
+     *   - LocalVariableTable  (nomes/descritores das locais)
+     *   - StackMapTable       (info para o verificador moderno) */
     c.attributes_count = ler_u2(fp);
+
+    /* Passo 8 - alocar e ler cada sub-atributo recursivamente.
+     * ler_atributo() faz o dispatch pelo nome de cada um (string
+     * Utf8 no pool), exatamente como no nivel topo da classe. */
     c.attributes = static_cast<AttributeInfo*>(
         std::malloc(sizeof(AttributeInfo) * c.attributes_count));
     for (u2 i = 0; i < c.attributes_count; ++i) {
         c.attributes[i] = ler_atributo(fp, arq);
     }
+
+    /* Passo 9 - devolver o CodeAttribute completamente preenchido.
+     * A partir daqui o fp esta posicionado no byte logo depois deste
+     * atributo, pronto para o proximo. */
     return c;
 }
 
@@ -520,6 +685,17 @@ DeprecatedAttribute LeitorClasse::ler_attr_deprecated()
     return DeprecatedAttribute();
 }
 
+/*
+ * ler_atributo - le um atributo generico do .class.
+ *
+ * Todo atributo comeca com o mesmo cabecalho:
+ *   u2 attribute_name_index;  -> aponta p/ Utf8 com o nome
+ *   u4 attribute_length;      -> tamanho do payload em bytes
+ *
+ * O nome (string) determina qual parser especializado chamar.
+ * Atributos desconhecidos (exceto StackMapTable) sao tratados
+ * como erro fatal. StackMapTable e' pulado por simplicidade.
+ */
 AttributeInfo LeitorClasse::ler_atributo(FILE* fp, ArquivoClasse* arq)
 {
     AttributeInfo a;
