@@ -38,12 +38,16 @@ CXXFLAGS  := $(OPT) $(WARN) $(EXTRA) -I$(DIR_INC)
 #   args              parser de CLI
 #   leitor_classe     parser binario do .class
 #   exibidor_classe   emissor textual estilo jclasslib
+#   objeto_string     objeto String do heap          (motor de execucao)
+#   objeto_arranjo    objeto array do heap           (motor de execucao)
 #   main              entrada
 FONTES    := \
     $(DIR_SRC)/util_classe.cpp \
     $(DIR_SRC)/args.cpp \
     $(DIR_SRC)/leitor_classe.cpp \
     $(DIR_SRC)/exibidor_classe.cpp \
+    $(DIR_SRC)/objeto_string.cpp \
+    $(DIR_SRC)/objeto_arranjo.cpp \
     $(DIR_SRC)/main.cpp
 OBJETOS   := $(patsubst $(DIR_SRC)/%.cpp, $(DIR_OBJ)/%.o, $(FONTES))
 
