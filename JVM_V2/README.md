@@ -50,7 +50,7 @@ JVM_V2/
 
 ## Checklist de progresso
 - [x] **Passo 1** — Base e estrutura (build verde) · [guia](passos/passo-01-base-e-estrutura.md)
-- [ ] **Passo 2** — Tipos de runtime (`Valor`/`TipoValor`/`TipoObjeto`) · [guia](passos/passo-02-tipos-runtime.md)
+- [x] **Passo 2** — Tipos de runtime (`Valor`/`TipoValor`/`TipoObjeto`) · [guia](passos/passo-02-tipos-runtime.md)
 - [ ] **Passo 3** — Objetos (`Objeto`/`ObjetoString`/`Arranjo`) · [guia](passos/passo-03-objetos-runtime.md)
 - [ ] **Passo 4** — Classes runtime (`ClasseEstatica`/`ClasseInstancia`) · [guia](passos/passo-04-classes-runtime.md)
 - [ ] **Passo 5** — `AreaMetodos` · [guia](passos/passo-05-area-metodos.md)
