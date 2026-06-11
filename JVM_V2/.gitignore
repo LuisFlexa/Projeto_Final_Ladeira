@@ -1,0 +1,8 @@
+bin
+obj/
+out.txt
+viewer.txt
+*.exe
+output/
+.vscode/
+.DS_Store
