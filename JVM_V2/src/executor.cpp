@@ -3384,7 +3384,7 @@ void Executor::invokespecial()
     string method_name = formatar_constante(constant_pool, methodNameAndType.name_index);
     string methodDescriptor = formatar_constante(constant_pool, methodNameAndType.descriptor_index);
 
-    if ((className == "java/lang/Objeto" || className == "java/lang/String") && method_name == "<init>") {
+    if ((className == "java/lang/Object" || className == "java/lang/String") && method_name == "<init>") {
         if (className == "java/lang/String") {
             top_frame->pop_operand_stack();
         }
@@ -3466,7 +3466,7 @@ void Executor::invokestatic()
     ConstNameTypeInfo methodNameAndType = nameAndTypeCP.info.name_type_info;
     string method_name = formatar_constante(constant_pool, methodNameAndType.name_index);
     string methodDescriptor = formatar_constante(constant_pool, methodNameAndType.descriptor_index);
-    if (className == "java/lang/Objeto" && method_name == "registerNatives") {
+    if (className == "java/lang/Object" && method_name == "registerNatives") {
         top_frame->pc += 3;
         return;
     }
@@ -3799,9 +3799,9 @@ void Executor::checkcast()
             }
             resultValue.dados.valor_int = found ? 1 : 0;
         } else if (obj->tipo_objeto() == INSTANCIA_STRING) {
-            resultValue.dados.valor_int = (className == "java/lang/String" || className == "java/lang/Objeto") ? 1 : 0;
+            resultValue.dados.valor_int = (className == "java/lang/String" || className == "java/lang/Object") ? 1 : 0;
         } else {
-            if (className == "java/lang/Objeto") {
+            if (className == "java/lang/Object") {
                 resultValue.dados.valor_int = 1;
             } else {
                 resultValue.dados.valor_int = 0;
@@ -3852,9 +3852,9 @@ void Executor::instanceof()
             }
             resultValue.dados.valor_int = found ? 1 : 0;
         } else if (obj->tipo_objeto() == INSTANCIA_STRING) {
-            resultValue.dados.valor_int = (className == "java/lang/String" || className == "java/lang/Objeto") ? 1 : 0;
+            resultValue.dados.valor_int = (className == "java/lang/String" || className == "java/lang/Object") ? 1 : 0;
         } else {
-            if (className == "java/lang/Objeto") {
+            if (className == "java/lang/Object") {
                 resultValue.dados.valor_int = 1;
             } else {
                 resultValue.dados.valor_int = 0;
