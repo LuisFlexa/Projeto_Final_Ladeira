@@ -42,6 +42,7 @@ CXXFLAGS  := $(OPT) $(WARN) $(EXTRA) -I$(DIR_INC)
 #   objeto_arranjo    objeto array do heap           (motor de execucao)
 #   classe_estatica   classe carregada + estaticos   (motor de execucao)
 #   classe_instancia  instancia de objeto + campos   (motor de execucao)
+#   area_metodos      cache de classes carregadas    (motor de execucao)
 #   main              entrada
 FONTES    := \
     $(DIR_SRC)/util_classe.cpp \
@@ -52,6 +53,7 @@ FONTES    := \
     $(DIR_SRC)/objeto_arranjo.cpp \
     $(DIR_SRC)/classe_estatica.cpp \
     $(DIR_SRC)/classe_instancia.cpp \
+    $(DIR_SRC)/area_metodos.cpp \
     $(DIR_SRC)/main.cpp
 OBJETOS   := $(patsubst $(DIR_SRC)/%.cpp, $(DIR_OBJ)/%.o, $(FONTES))
 
