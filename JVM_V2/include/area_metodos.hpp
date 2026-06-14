@@ -35,6 +35,11 @@ public:
     // Retorna a ClasseEstatica ja' carregada com esse nome, ou nullptr.
     ClasseEstatica* obter_classe(const std::string& nome);
 
+    // Insere uma ClasseEstatica ja' construida no cache (sem empilhar <clinit>).
+    // Usado pelo main para registrar a classe ponto-de-entrada antes de chamar
+    // executar_metodos, evitando empilhamento duplo de <clinit>.
+    void registrar_classe(ClasseEstatica* c);
+
     // Diretorio onde estao os .class (definido pelo main, passo 9).
     std::string class_path = "";
 

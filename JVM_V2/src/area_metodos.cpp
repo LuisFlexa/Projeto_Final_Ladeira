@@ -72,6 +72,11 @@ ClasseEstatica* AreaMetodos::carregar_classe(const string& nome)
     return classe_runtime;
 }
 
+void AreaMetodos::registrar_classe(ClasseEstatica* c)
+{
+    inserir_classe(c);  // sem empilhar <clinit>
+}
+
 ClasseEstatica* AreaMetodos::obter_classe(const string& nome)
 {
     auto it = classes.find(nome);
