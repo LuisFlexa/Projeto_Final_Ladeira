@@ -40,6 +40,8 @@ CXXFLAGS  := $(OPT) $(WARN) $(EXTRA) -I$(DIR_INC)
 #   exibidor_classe   emissor textual estilo jclasslib
 #   objeto_string     objeto String do heap          (motor de execucao)
 #   objeto_arranjo    objeto array do heap           (motor de execucao)
+#   classe_estatica   classe carregada + estaticos   (motor de execucao)
+#   classe_instancia  instancia de objeto + campos   (motor de execucao)
 #   main              entrada
 FONTES    := \
     $(DIR_SRC)/util_classe.cpp \
@@ -48,6 +50,8 @@ FONTES    := \
     $(DIR_SRC)/exibidor_classe.cpp \
     $(DIR_SRC)/objeto_string.cpp \
     $(DIR_SRC)/objeto_arranjo.cpp \
+    $(DIR_SRC)/classe_estatica.cpp \
+    $(DIR_SRC)/classe_instancia.cpp \
     $(DIR_SRC)/main.cpp
 OBJETOS   := $(patsubst $(DIR_SRC)/%.cpp, $(DIR_OBJ)/%.o, $(FONTES))
 
