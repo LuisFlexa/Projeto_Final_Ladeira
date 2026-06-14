@@ -11,6 +11,9 @@
 #include "area_metodos.hpp"
 #include "leitor_classe.hpp"
 #include "exibidor_classe.hpp"  // formatar_constante
+#include "executor.hpp"         // Executor (verifica_metodo + clinit)
+#include "frame.hpp"            // Frame do <clinit>
+#include "pilha_execucao.hpp"   // PilhaExecucao
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -57,8 +60,14 @@ ClasseEstatica* AreaMetodos::carregar_classe(const string& nome)
         return existente;
     }
 
-    // TODO clinit — passo 7: se a classe tiver <clinit> ()V, empilhar seu
-    // Frame na PilhaExecucao para que o Executor o rode antes do uso.
+    // Se a classe declara <clinit> ()V (bloco de inicializacao estatica),
+    // empilha seu Frame na PilhaExecucao para que o Executor o rode antes do
+    // primeiro uso da classe. (Religado no passo 7, fecha o TODO do passo 5.)
+    Executor& executor = Executor::instancia();
+    if (executor.verifica_metodo(classe_runtime, "<clinit>", "()V")) {
+        PilhaExecucao::instancia().empilhar_frame(
+            new Frame(classe_runtime, "<clinit>", "()V"));
+    }
 
     return classe_runtime;
 }
