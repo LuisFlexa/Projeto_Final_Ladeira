@@ -2,9 +2,9 @@
  * executor.cpp
  *
  * Implementacao do Executor (= Operations da referencia). Passo 8: conjunto
- * completo de opcodes. Portado de JVM/src/Operations.cpp por transformacao
- * mecanica (ver JVM_V2/portar_executor.py): nomes em PT e designated
- * initializers convertidos para os helpers faz_valor_* de tipos_runtime.hpp.
+ * completo de opcodes. Portado de JVM/src/Operations.cpp: nomes em PT e
+ * designated initializers convertidos para os helpers faz_valor_* de
+ * tipos_runtime.hpp.
  *
  * executar_metodos / verifica_metodo / instrucao_nao_implementada sao nossas
  * (passo 7); o restante (popula_multiarranjo, opcodes, init_instrucoes) vem
