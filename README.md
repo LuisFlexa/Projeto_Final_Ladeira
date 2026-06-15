@@ -19,6 +19,9 @@ Máquina Virtual Java capaz de:
 └── examples/       # arquivos .class de teste
 ```
 
+O fluxo de execução do programa (e sua relação com a arquitetura da JVM dos
+slides) está documentado em [`FLUXO.md`](FLUXO.md).
+
 ## Como compilar
 
 Requer um `g++` com suporte a C++14. Na máquina de desenvolvimento foi usado o
