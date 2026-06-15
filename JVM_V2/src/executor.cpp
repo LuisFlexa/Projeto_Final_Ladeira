@@ -47,7 +47,7 @@ void Executor::executar_metodos(ClasseEstatica* classe_runtime)
 {
     PilhaExecucao& pilha = PilhaExecucao::instancia();
 
-    // Argumento do main: o array de String[] da linha de comando (vazio aqui).
+    // Argumento do main: o arranjo de String[] da linha de comando (vazio aqui).
     vector<Valor> argumentos;
     argumentos.push_back(faz_valor_referencia(new Arranjo(REFERENCIA)));
 
@@ -62,8 +62,8 @@ void Executor::executar_metodos(ClasseEstatica* classe_runtime)
     // Laco principal: roda ate a pilha esvaziar (ultimo return desempilha).
     while (pilha.tamanho() > 0) {
         Frame* topo = pilha.frame_topo();
-        u1* code = topo->get_code(topo->pc);
-        (this->*tabela_funcoes[code[0]])();  // cada opcode avanca o pc
+        u1* codigo = topo->get_code(topo->pc);
+        (this->*tabela_funcoes[codigo[0]])();  // cada opcode avanca o pc
     }
 }
 
@@ -86,8 +86,8 @@ bool Executor::verifica_metodo(ClasseEstatica* classe_runtime,
 void Executor::instrucao_nao_implementada()
 {
     Frame* topo = PilhaExecucao::instancia().frame_topo();
-    u1* code = topo->get_code(topo->pc);
-    u1 opcode = code[0];
+    u1* codigo = topo->get_code(topo->pc);
+    u1 opcode = codigo[0];
 
     const string& mnem = (opcode < 202) ? tabela_mnemonicos[opcode] : string("???");
     cerr << "Opcode nao implementado: 0x" << std::hex << (int)opcode
@@ -98,22 +98,22 @@ void Executor::instrucao_nao_implementada()
 /* ------------------------------------------------------------------------- */
 /* popula_multiarranjo (multianewarray)                                      */
 /* ------------------------------------------------------------------------- */
-void Executor::popula_multiarranjo(Arranjo* array, TipoValor value_type, stack<int> count)
+void Executor::popula_multiarranjo(Arranjo* arranjo, TipoValor tipo_valor, stack<int> contagem)
 {
-    int curr_count = count.top();
-    count.pop();
-    TipoValor array_type = (count.size() > 1) ? REFERENCIA : value_type;
-    if (count.size() == 0) {
+    int curr_count = contagem.top();
+    contagem.pop();
+    TipoValor tipo_arranjo = (contagem.size() > 1) ? REFERENCIA : tipo_valor;
+    if (contagem.size() == 0) {
         for (int i = 0; i < curr_count; i++) {
             Valor sub_array_value = faz_valor_long(0);
-            array->push_value(sub_array_value);
+            arranjo->push_value(sub_array_value);
         }
     } else {
         for (int i = 0; i < curr_count; i++) {
-            Arranjo* subarray = new Arranjo(array_type);
-            popula_multiarranjo(subarray, value_type, count);
-            Valor sub_array_value = faz_valor_referencia(subarray);
-            array->push_value(sub_array_value);
+            Arranjo* subarranjo = new Arranjo(tipo_arranjo);
+            popula_multiarranjo(subarranjo, tipo_valor, contagem);
+            Valor sub_array_value = faz_valor_referencia(subarranjo);
+            arranjo->push_value(sub_array_value);
         }
     }
 }
@@ -123,191 +123,191 @@ void Executor::popula_multiarranjo(Arranjo* array, TipoValor value_type, stack<i
 /* ----------------------------------------------------------------------- */
 void Executor::nop()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    frame_corrente->pc++;
 }
 
 void Executor::aconst_null()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_referencia(NULL);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_referencia(NULL);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iconst_m1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_int(-1);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_int(-1);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iconst_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_int(0);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_int(0);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iconst_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_int(1);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_int(1);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iconst_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_int(2);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_int(2);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iconst_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_int(3);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_int(3);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iconst_4()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_int(4);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_int(4);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iconst_5()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_int(5);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_int(5);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::lconst_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
     Valor padding = faz_valor_padding();
-    Valor value = faz_valor_long(0);
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    Valor valor = faz_valor_long(0);
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::lconst_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
     Valor padding = faz_valor_padding();
-    Valor value = faz_valor_long(1);
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    Valor valor = faz_valor_long(1);
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fconst_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_float(0);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_float(0);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fconst_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_float(1);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_float(1);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fconst_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = faz_valor_float(2);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = faz_valor_float(2);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dconst_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
     Valor padding = faz_valor_padding();
-    Valor value = faz_valor_double(0);
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    Valor valor = faz_valor_double(0);
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dconst_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
     Valor padding = faz_valor_padding();
-    Valor value = faz_valor_double(1);
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    Valor valor = faz_valor_double(1);
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::bipush()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte = code[1];
-    Valor value = faz_valor_int((int32_t)(int8_t)byte);
-    value.tipo_print = BYTE;
-    top_frame->push_operand_stack(value);
-    top_frame->pc += 2;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte = codigo[1];
+    Valor valor = faz_valor_int((int32_t)(int8_t)byte);
+    valor.tipo_print = BYTE;
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc += 2;
 }
 
 void Executor::sipush()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t short_value = (byte1 << 8) | byte2;
-    Valor value = faz_valor_int((int32_t)(int16_t)short_value);
-    value.tipo_print = SHORT;
-    top_frame->push_operand_stack(value);
-    top_frame->pc += 3;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t valor_short = (byte1 << 8) | byte2;
+    Valor valor = faz_valor_int((int32_t)(int16_t)valor_short);
+    valor.tipo_print = SHORT;
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc += 3;
 }
 
 void Executor::ldc()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 index = code[1];
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    ConstantPoolInfo entry = constant_pool[index - 1];
-    Valor value;
-    if (entry.tag == ConstStr) {
-        ConstantPoolInfo utf8_entry = constant_pool[entry.info.str_info.string_index - 1];
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 indice = codigo[1];
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    ConstantPoolInfo entrada = constant_pool[indice - 1];
+    Valor valor;
+    if (entrada.tag == ConstStr) {
+        ConstantPoolInfo utf8_entry = constant_pool[entrada.info.str_info.string_index - 1];
         assert(utf8_entry.tag == ConstUtf8);
         u1* bytes = utf8_entry.info.utf8_info.bytes;
         char utf8_str[utf8_entry.info.utf8_info.length + 1];
@@ -316,38 +316,38 @@ void Executor::ldc()
             utf8_str[i] = bytes[i];
         }
         utf8_str[i] = '\0';
-        value = faz_valor_referencia(new ObjetoString(utf8_str));
-    } else if (entry.tag == ConstInt) {
-        value = faz_valor_int((int32_t)entry.info.int_info.bytes);
-    } else if (entry.tag == ConstFloat) {
-        u4 floatBytes = entry.info.float_info.bytes;
-        int s = ((floatBytes >> 31) == 0) ? 1 : -1;
-        int e = ((floatBytes >> 23) & 0xff);
-        int m = (e == 0) ? (floatBytes & 0x7fffff) << 1 : (floatBytes & 0x7fffff) | 0x800000;
-        float number = s * m * pow(2, e - 150);
-        value = faz_valor_float(number);
+        valor = faz_valor_referencia(new ObjetoString(utf8_str));
+    } else if (entrada.tag == ConstInt) {
+        valor = faz_valor_int((int32_t)entrada.info.int_info.bytes);
+    } else if (entrada.tag == ConstFloat) {
+        u4 bytes_float = entrada.info.float_info.bytes;
+        int s = ((bytes_float >> 31) == 0) ? 1 : -1;
+        int e = ((bytes_float >> 23) & 0xff);
+        int m = (e == 0) ? (bytes_float & 0x7fffff) << 1 : (bytes_float & 0x7fffff) | 0x800000;
+        float numero = s * m * pow(2, e - 150);
+        valor = faz_valor_float(numero);
     } else {
         
-        cerr << "ldc trying to access invalid constant pool element " << entry.tag << endl;
+        cerr << "ldc trying to access invalid constant pool element " << entrada.tag << endl;
         exit(1);
     }
-    top_frame->push_operand_stack(value);
-    top_frame->pc += 2;
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc += 2;
 }
 
 void Executor::ldc_w()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    u2 index = (byte1 << 8) | byte2;
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    ConstantPoolInfo entry = constant_pool[index - 1];
-    Valor value;
-    if (entry.tag == ConstStr) {
-        ConstantPoolInfo utf8_entry = constant_pool[entry.info.str_info.string_index - 1];
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    u2 indice = (byte1 << 8) | byte2;
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    ConstantPoolInfo entrada = constant_pool[indice - 1];
+    Valor valor;
+    if (entrada.tag == ConstStr) {
+        ConstantPoolInfo utf8_entry = constant_pool[entrada.info.str_info.string_index - 1];
         assert(utf8_entry.tag == ConstUtf8);
         u1* bytes = utf8_entry.info.utf8_info.bytes;
         char utf8_str[utf8_entry.info.utf8_info.length + 1];
@@ -356,2979 +356,2979 @@ void Executor::ldc_w()
             utf8_str[i] = bytes[i];
         }
         utf8_str[i] = '\0';
-        value = faz_valor_referencia(new ObjetoString(utf8_str));
-    } else if (entry.tag == ConstInt) {
-        value = faz_valor_int((int)entry.info.int_info.bytes);
-    } else if (entry.tag == ConstFloat) {
-        u4 floatBytes = entry.info.float_info.bytes;
-        int s = ((floatBytes >> 31) == 0) ? 1 : -1;
-        int e = ((floatBytes >> 23) & 0xff);
-        int m = (e == 0) ? (floatBytes & 0x7fffff) << 1 : (floatBytes & 0x7fffff) | 0x800000;
-        float number = s * m * pow(2, e - 150);
-        value = faz_valor_float(number);
+        valor = faz_valor_referencia(new ObjetoString(utf8_str));
+    } else if (entrada.tag == ConstInt) {
+        valor = faz_valor_int((int)entrada.info.int_info.bytes);
+    } else if (entrada.tag == ConstFloat) {
+        u4 bytes_float = entrada.info.float_info.bytes;
+        int s = ((bytes_float >> 31) == 0) ? 1 : -1;
+        int e = ((bytes_float >> 23) & 0xff);
+        int m = (e == 0) ? (bytes_float & 0x7fffff) << 1 : (bytes_float & 0x7fffff) | 0x800000;
+        float numero = s * m * pow(2, e - 150);
+        valor = faz_valor_float(numero);
     } else {
-        cerr << "ldc_w trying to access invalid constant pool element " << entry.tag << endl;
+        cerr << "ldc_w trying to access invalid constant pool element " << entrada.tag << endl;
         exit(1);
     }
-    top_frame->push_operand_stack(value);
-    top_frame->pc += 3;
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc += 3;
 }
 
 void Executor::ldc2_w()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    u2 index = (byte1 << 8) | byte2;
-    ConstantPoolInfo* class_file = *(top_frame->get_constant_pool());
-    ConstantPoolInfo entry = class_file[index - 1];
-    Valor value;
-    if (entry.tag == ConstLong) {
-        u4 highBytes = entry.info.long_info.high_bytes;
-        u4 lowBytes = entry.info.long_info.low_bytes;
-        int64_t longNumber = ((int64_t)highBytes << 32) + lowBytes;
-        value = faz_valor_long(longNumber);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    u2 indice = (byte1 << 8) | byte2;
+    ConstantPoolInfo* arquivo_classe = *(frame_corrente->get_constant_pool());
+    ConstantPoolInfo entrada = arquivo_classe[indice - 1];
+    Valor valor;
+    if (entrada.tag == ConstLong) {
+        u4 bytes_altos = entrada.info.long_info.high_bytes;
+        u4 bytes_baixos = entrada.info.long_info.low_bytes;
+        int64_t numero_long = ((int64_t)bytes_altos << 32) + bytes_baixos;
+        valor = faz_valor_long(numero_long);
         Valor padding = faz_valor_padding();
-        top_frame->push_operand_stack(padding);
-    } else if (entry.tag == ConstDouble) {
-        u4 highBytes = entry.info.double_info.high_bytes;
-        u4 lowBytes = entry.info.double_info.low_bytes;
-        int64_t longNumber = ((int64_t)highBytes << 32) + lowBytes;
-        int32_t s = ((longNumber >> 63) == 0) ? 1 : -1;
-        int32_t e = (int32_t)((longNumber >> 52) & 0x7ffL);
-        int64_t m = (e == 0) ? (longNumber & 0xfffffffffffffL) << 1 : (longNumber & 0xfffffffffffffL) | 0x10000000000000L;
-        double doubleNumber = s * m * pow(2, e - 1075);
-        value = faz_valor_double(doubleNumber);
+        frame_corrente->push_operand_stack(padding);
+    } else if (entrada.tag == ConstDouble) {
+        u4 bytes_altos = entrada.info.double_info.high_bytes;
+        u4 bytes_baixos = entrada.info.double_info.low_bytes;
+        int64_t numero_long = ((int64_t)bytes_altos << 32) + bytes_baixos;
+        int32_t s = ((numero_long >> 63) == 0) ? 1 : -1;
+        int32_t e = (int32_t)((numero_long >> 52) & 0x7ffL);
+        int64_t m = (e == 0) ? (numero_long & 0xfffffffffffffL) << 1 : (numero_long & 0xfffffffffffffL) | 0x10000000000000L;
+        double numero_double = s * m * pow(2, e - 1075);
+        valor = faz_valor_double(numero_double);
         Valor padding = faz_valor_padding();
-        top_frame->push_operand_stack(padding);
+        frame_corrente->push_operand_stack(padding);
     } else {
-        cerr << "ldc2_w trying to access invalid constant pool element " << entry.tag << endl;
+        cerr << "ldc2_w trying to access invalid constant pool element " << entrada.tag << endl;
         exit(1);
     }
-    top_frame->push_operand_stack(value);
-    top_frame->pc += 3;
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc += 3;
 }
 
 void Executor::iload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > index));
-    Valor value = top_frame->get_local_variable_value(index);
-    assert(value.tipo == INT);
-    top_frame->push_operand_stack(value);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > indice));
+    Valor valor = frame_corrente->get_local_variable_value(indice);
+    assert(valor.tipo == INT);
+    frame_corrente->push_operand_stack(valor);
 }
 
 void Executor::lload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > (index + 1)));
-    Valor value = top_frame->get_local_variable_value(index);
-    assert(value.tipo == LONG);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > (indice + 1)));
+    Valor valor = frame_corrente->get_local_variable_value(indice);
+    assert(valor.tipo == LONG);
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(value);
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(valor);
 }
 
 void Executor::fload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > index));
-    Valor value = top_frame->get_local_variable_value(index);
-    assert(value.tipo == FLOAT);
-    top_frame->push_operand_stack(value);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > indice));
+    Valor valor = frame_corrente->get_local_variable_value(indice);
+    assert(valor.tipo == FLOAT);
+    frame_corrente->push_operand_stack(valor);
 }
 
 void Executor::dload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > (index + 1)));
-    Valor value = top_frame->get_local_variable_value(index);
-    assert(value.tipo == DOUBLE);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > (indice + 1)));
+    Valor valor = frame_corrente->get_local_variable_value(indice);
+    assert(valor.tipo == DOUBLE);
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(value);
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(valor);
 }
 
 void Executor::aload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > index));
-    Valor value = top_frame->get_local_variable_value(index);
-    assert(value.tipo == REFERENCIA);
-    top_frame->push_operand_stack(value);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > indice));
+    Valor valor = frame_corrente->get_local_variable_value(indice);
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->push_operand_stack(valor);
 }
 
 void Executor::iload_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(0);
-    assert(value.tipo == INT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(0);
+    assert(valor.tipo == INT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iload_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(1);
-    assert(value.tipo == INT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(1);
+    assert(valor.tipo == INT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iload_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(2);
-    assert(value.tipo == INT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(2);
+    assert(valor.tipo == INT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iload_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(3);
-    assert(value.tipo == INT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(3);
+    assert(valor.tipo == INT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::lload_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(1);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(0);
-    assert(value.tipo == LONG);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(1);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(0);
+    assert(valor.tipo == LONG);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::lload_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(2);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(1);
-    assert(value.tipo == LONG);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(2);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(1);
+    assert(valor.tipo == LONG);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::lload_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(3);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(2);
-    assert(value.tipo == LONG);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(3);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(2);
+    assert(valor.tipo == LONG);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::lload_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(4);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(3);
-    assert(value.tipo == LONG);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(4);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(3);
+    assert(valor.tipo == LONG);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fload_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(0);
-    assert(value.tipo == FLOAT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(0);
+    assert(valor.tipo == FLOAT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fload_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(1);
-    assert(value.tipo == FLOAT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(1);
+    assert(valor.tipo == FLOAT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fload_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(2);
-    assert(value.tipo == FLOAT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(2);
+    assert(valor.tipo == FLOAT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fload_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(3);
-    assert(value.tipo == FLOAT);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(3);
+    assert(valor.tipo == FLOAT);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dload_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(1);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(0);
-    assert(value.tipo == DOUBLE);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(1);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(0);
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dload_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(2);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(1);
-    assert(value.tipo == DOUBLE);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(2);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(1);
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dload_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(3);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(2);
-    assert(value.tipo == DOUBLE);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(3);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(2);
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dload_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value;
-    value = top_frame->get_local_variable_value(4);
-    assert(value.tipo == PADDING);
-    top_frame->push_operand_stack(value);
-    value = top_frame->get_local_variable_value(3);
-    assert(value.tipo == DOUBLE);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor;
+    valor = frame_corrente->get_local_variable_value(4);
+    assert(valor.tipo == PADDING);
+    frame_corrente->push_operand_stack(valor);
+    valor = frame_corrente->get_local_variable_value(3);
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::aload_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(0);
-    assert(value.tipo == REFERENCIA);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(0);
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::aload_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(1);
-    assert(value.tipo == REFERENCIA);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(1);
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::aload_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(2);
-    assert(value.tipo == REFERENCIA);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(2);
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::aload_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->get_local_variable_value(3);
-    assert(value.tipo == REFERENCIA);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->get_local_variable_value(3);
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::iaload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    top_frame->push_operand_stack(array->get_value(index.dados.valor_int));
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(arranjo->get_value(indice.dados.valor_int));
+    frame_corrente->pc++;
 }
 
 void Executor::laload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if ((signed)index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if ((signed)indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(array->get_value(index.dados.valor_int));
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(arranjo->get_value(indice.dados.valor_int));
+    frame_corrente->pc++;
 }
 
 void Executor::faload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    top_frame->push_operand_stack(array->get_value(index.dados.valor_int));
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(arranjo->get_value(indice.dados.valor_int));
+    frame_corrente->pc++;
 }
 
 void Executor::daload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    top_frame->push_operand_stack(array->get_value(index.dados.valor_int));
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(padding);
+    frame_corrente->push_operand_stack(arranjo->get_value(indice.dados.valor_int));
+    frame_corrente->pc++;
 }
 
 void Executor::aaload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    top_frame->push_operand_stack(array->get_value(index.dados.valor_int));
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(arranjo->get_value(indice.dados.valor_int));
+    frame_corrente->pc++;
 }
 
 void Executor::baload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    Valor value = array->get_value(index.dados.valor_int);
-    assert(value.tipo == BOOLEANO || value.tipo == BYTE);
-    if (value.tipo == BOOLEANO) {
-        value = faz_valor_int(value.dados.valor_booleano);
-    value.tipo_print = BOOLEANO;
+    Valor valor = arranjo->get_value(indice.dados.valor_int);
+    assert(valor.tipo == BOOLEANO || valor.tipo == BYTE);
+    if (valor.tipo == BOOLEANO) {
+        valor = faz_valor_int(valor.dados.valor_booleano);
+    valor.tipo_print = BOOLEANO;
     } else {
-        value = faz_valor_int((int32_t)value.dados.valor_byte);
-    value.tipo_print = BYTE;
+        valor = faz_valor_int((int32_t)valor.dados.valor_byte);
+    valor.tipo_print = BYTE;
     }
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::caload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    Valor char_value = array->get_value(index.dados.valor_int);
+    Valor char_value = arranjo->get_value(indice.dados.valor_int);
     char_value = faz_valor_int(char_value.dados.valor_char);
     char_value.tipo_print = CHAR;
-    top_frame->push_operand_stack(char_value);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(char_value);
+    frame_corrente->pc++;
 }
 
 void Executor::saload()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    Valor short_value = array->get_value(index.dados.valor_int);
-    short_value = faz_valor_int((int32_t)short_value.dados.valor_short);
-    short_value.tipo_print = SHORT;
-    top_frame->push_operand_stack(short_value);
-    top_frame->pc++;
+    Valor valor_short = arranjo->get_value(indice.dados.valor_int);
+    valor_short = faz_valor_int((int32_t)valor_short.dados.valor_short);
+    valor_short.tipo_print = SHORT;
+    frame_corrente->push_operand_stack(valor_short);
+    frame_corrente->pc++;
 }
 
 void Executor::istore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > index));
-    top_frame->set_local_variable(value, index);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > indice));
+    frame_corrente->set_local_variable(valor, indice);
 }
 
 void Executor::lstore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == LONG);
-    top_frame->pop_operand_stack();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == LONG);
+    frame_corrente->pop_operand_stack();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > (index + 1)));
-    top_frame->set_local_variable(value, index);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > (indice + 1)));
+    frame_corrente->set_local_variable(valor, indice);
     Valor padding = faz_valor_padding();
-    top_frame->set_local_variable(padding, index + 1);
+    frame_corrente->set_local_variable(padding, indice + 1);
 }
 
 void Executor::fstore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == FLOAT);
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == FLOAT);
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > index));
-    top_frame->set_local_variable(value, index);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > indice));
+    frame_corrente->set_local_variable(valor, indice);
 }
 
 void Executor::dstore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == DOUBLE);
-    top_frame->pop_operand_stack();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->pop_operand_stack();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > (index + 1)));
-    top_frame->set_local_variable(value, index);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > (indice + 1)));
+    frame_corrente->set_local_variable(valor, indice);
     Valor padding = faz_valor_padding();
-    top_frame->set_local_variable(padding, index + 1);
+    frame_corrente->set_local_variable(padding, indice + 1);
 }
 
 void Executor::astore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == REFERENCIA);
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    int16_t index = (int16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == REFERENCIA);
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    int16_t indice = (int16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
-        top_frame->pc += 3;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
+        frame_corrente->pc += 3;
         is_wide = false;
     } else {
-        top_frame->pc += 2;
+        frame_corrente->pc += 2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > index));
-    top_frame->set_local_variable(value, index);
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > indice));
+    frame_corrente->set_local_variable(valor, indice);
 }
 
 void Executor::istore_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    top_frame->set_local_variable(value, 0);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    frame_corrente->set_local_variable(valor, 0);
+    frame_corrente->pc++;
 }
 
 void Executor::istore_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    top_frame->set_local_variable(value, 1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    frame_corrente->set_local_variable(valor, 1);
+    frame_corrente->pc++;
 }
 
 void Executor::istore_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    top_frame->set_local_variable(value, 2);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    frame_corrente->set_local_variable(valor, 2);
+    frame_corrente->pc++;
 }
 
 void Executor::istore_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    top_frame->set_local_variable(value, 3);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    frame_corrente->set_local_variable(valor, 3);
+    frame_corrente->pc++;
 }
 
 void Executor::lstore_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == LONG);
-    top_frame->set_local_variable(value, 0);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == LONG);
+    frame_corrente->set_local_variable(valor, 0);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 1);
+    frame_corrente->pc++;
 }
 
 void Executor::lstore_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == LONG);
-    top_frame->set_local_variable(value, 1);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 2);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == LONG);
+    frame_corrente->set_local_variable(valor, 1);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 2);
+    frame_corrente->pc++;
 }
 
 void Executor::lstore_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == LONG);
-    top_frame->set_local_variable(value, 2);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 3);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == LONG);
+    frame_corrente->set_local_variable(valor, 2);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 3);
+    frame_corrente->pc++;
 }
 
 void Executor::lstore_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == LONG);
-    top_frame->set_local_variable(value, 3);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 4);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == LONG);
+    frame_corrente->set_local_variable(valor, 3);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 4);
+    frame_corrente->pc++;
 }
 
 void Executor::fstore_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == FLOAT);
-    top_frame->set_local_variable(value, 0);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == FLOAT);
+    frame_corrente->set_local_variable(valor, 0);
+    frame_corrente->pc++;
 }
 
 void Executor::fstore_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == FLOAT);
-    top_frame->set_local_variable(value, 1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == FLOAT);
+    frame_corrente->set_local_variable(valor, 1);
+    frame_corrente->pc++;
 }
 
 void Executor::fstore_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == FLOAT);
-    top_frame->set_local_variable(value, 2);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == FLOAT);
+    frame_corrente->set_local_variable(valor, 2);
+    frame_corrente->pc++;
 }
 
 void Executor::fstore_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == FLOAT);
-    top_frame->set_local_variable(value, 3);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == FLOAT);
+    frame_corrente->set_local_variable(valor, 3);
+    frame_corrente->pc++;
 }
 
 void Executor::dstore_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == DOUBLE);
-    top_frame->set_local_variable(value, 0);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->set_local_variable(valor, 0);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 1);
+    frame_corrente->pc++;
 }
 
 void Executor::dstore_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == DOUBLE);
-    top_frame->set_local_variable(value, 1);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 2);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->set_local_variable(valor, 1);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 2);
+    frame_corrente->pc++;
 }
 
 void Executor::dstore_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == DOUBLE);
-    top_frame->set_local_variable(value, 2);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 3);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->set_local_variable(valor, 2);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 3);
+    frame_corrente->pc++;
 }
 
 void Executor::dstore_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == DOUBLE);
-    top_frame->set_local_variable(value, 3);
-    value = top_frame->pop_operand_stack();
-    assert(value.tipo == PADDING);
-    top_frame->set_local_variable(value, 4);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == DOUBLE);
+    frame_corrente->set_local_variable(valor, 3);
+    valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == PADDING);
+    frame_corrente->set_local_variable(valor, 4);
+    frame_corrente->pc++;
 }
 
 void Executor::astore_0()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == REFERENCIA);
-    top_frame->set_local_variable(value, 0);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->set_local_variable(valor, 0);
+    frame_corrente->pc++;
 }
 
 void Executor::astore_1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == REFERENCIA);
-    top_frame->set_local_variable(value, 1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->set_local_variable(valor, 1);
+    frame_corrente->pc++;
 }
 
 void Executor::astore_2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == REFERENCIA);
-    top_frame->set_local_variable(value, 2);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->set_local_variable(valor, 2);
+    frame_corrente->pc++;
 }
 
 void Executor::astore_3()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == REFERENCIA);
-    top_frame->set_local_variable(value, 3);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == REFERENCIA);
+    frame_corrente->set_local_variable(valor, 3);
+    frame_corrente->pc++;
 }
 
 void Executor::iastore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int >= (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int >= (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    value.tipo_print = INT;
-    assert(value.tipo == array->array_content_type());
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    valor.tipo_print = INT;
+    assert(valor.tipo == arranjo->array_content_type());
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::lastore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == LONG);
-    Valor padding = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == LONG);
+    Valor padding = frame_corrente->pop_operand_stack();
     assert(padding.tipo == PADDING);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int >= (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int >= (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    assert(value.tipo == array->array_content_type());
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    assert(valor.tipo == arranjo->array_content_type());
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::fastore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == FLOAT);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == FLOAT);
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int >= (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int >= (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    assert(value.tipo == array->array_content_type());
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    assert(valor.tipo == arranjo->array_content_type());
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dastore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == DOUBLE);
-    Valor padding = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == DOUBLE);
+    Valor padding = frame_corrente->pop_operand_stack();
     assert(padding.tipo == PADDING);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int >= (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int >= (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    assert(value.tipo == array->array_content_type());
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    assert(valor.tipo == arranjo->array_content_type());
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::aastore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == REFERENCIA);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == REFERENCIA);
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int >= (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int >= (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::bastore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    assert(array->array_content_type() == BOOLEANO || array->array_content_type() == BYTE);
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    assert(arranjo->array_content_type() == BOOLEANO || arranjo->array_content_type() == BYTE);
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    if (array->array_content_type() == BOOLEANO) {
-        value = faz_valor_booleano((value.dados.valor_int != 0) ? true : false);
+    if (arranjo->array_content_type() == BOOLEANO) {
+        valor = faz_valor_booleano((valor.dados.valor_int != 0) ? true : false);
     } else {
-        value = faz_valor_byte((int8_t)value.dados.valor_int);
+        valor = faz_valor_byte((int8_t)valor.dados.valor_int);
     }
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::castore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    value = faz_valor_char((uint8_t)value.dados.valor_int);
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    valor = faz_valor_char((uint8_t)valor.dados.valor_int);
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::sastore()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Arranjo* array;
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    Valor index = top_frame->pop_operand_stack();
-    assert(index.tipo == INT);
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Arranjo* arranjo;
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    Valor indice = frame_corrente->pop_operand_stack();
+    assert(indice.tipo == INT);
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     assert((arrayref.dados.objeto)->tipo_objeto() == ARRANJO);
-    array = (Arranjo*)arrayref.dados.objeto;
-    if (array == NULL) {
+    arranjo = (Arranjo*)arrayref.dados.objeto;
+    if (arranjo == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
-    if (index.dados.valor_int > (signed)array->get_size() || index.dados.valor_int < 0) {
+    if (indice.dados.valor_int > (signed)arranjo->get_size() || indice.dados.valor_int < 0) {
         cerr << "ArranjoIndexOutOfBoundsException" << endl;
         exit(2);
     }
-    value = faz_valor_short((int16_t)value.dados.valor_int);
-    array->change_value(index.dados.valor_int, value);
-    top_frame->pc++;
+    valor = faz_valor_short((int16_t)valor.dados.valor_int);
+    arranjo->change_value(indice.dados.valor_int, valor);
+    frame_corrente->pc++;
 }
 
 void Executor::pop()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo != LONG);
-    assert(value.tipo != DOUBLE);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo != LONG);
+    assert(valor.tipo != DOUBLE);
+    frame_corrente->pc++;
 }
 
 void Executor::pop2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    frame_corrente->pc++;
 }
 
 void Executor::dup()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo != LONG);
-    assert(value.tipo != DOUBLE);
-    top_frame->push_operand_stack(value);
-    top_frame->push_operand_stack(value);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo != LONG);
+    assert(valor.tipo != DOUBLE);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->push_operand_stack(valor);
+    frame_corrente->pc++;
 }
 
 void Executor::dup_x1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo != LONG);
-    assert(value_1.tipo != DOUBLE);
-    Valor value_2 = top_frame->pop_operand_stack();
-    assert(value_2.tipo != LONG);
-    assert(value_2.tipo != DOUBLE);
-    top_frame->push_operand_stack(value_1);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo != LONG);
+    assert(valor_1.tipo != DOUBLE);
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo != LONG);
+    assert(valor_2.tipo != DOUBLE);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dup_x2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_3 = top_frame->pop_operand_stack();
-    assert(value_1.tipo != LONG);
-    assert(value_1.tipo != DOUBLE);
-    assert(value_3.tipo != LONG);
-    assert(value_3.tipo != DOUBLE);
-    top_frame->push_operand_stack(value_1);
-    top_frame->push_operand_stack(value_3);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_3 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo != LONG);
+    assert(valor_1.tipo != DOUBLE);
+    assert(valor_3.tipo != LONG);
+    assert(valor_3.tipo != DOUBLE);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->push_operand_stack(valor_3);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dup2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    Valor value_2 = top_frame->pop_operand_stack();
-    assert(value_2.tipo != LONG);
-    assert(value_2.tipo != DOUBLE);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo != LONG);
+    assert(valor_2.tipo != DOUBLE);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dup2_x1()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_3 = top_frame->pop_operand_stack();
-    assert(value_2.tipo != LONG);
-    assert(value_2.tipo != DOUBLE);
-    assert(value_3.tipo != LONG);
-    assert(value_3.tipo != DOUBLE);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->push_operand_stack(value_3);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_3 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo != LONG);
+    assert(valor_2.tipo != DOUBLE);
+    assert(valor_3.tipo != LONG);
+    assert(valor_3.tipo != DOUBLE);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->push_operand_stack(valor_3);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dup2_x2()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_3 = top_frame->pop_operand_stack();
-    Valor value_4 = top_frame->pop_operand_stack();
-    assert(value_2.tipo != LONG);
-    assert(value_2.tipo != DOUBLE);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_3 = frame_corrente->pop_operand_stack();
+    Valor value_4 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo != LONG);
+    assert(valor_2.tipo != DOUBLE);
     assert(value_4.tipo != LONG);
     assert(value_4.tipo != DOUBLE);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->push_operand_stack(value_4);
-    top_frame->push_operand_stack(value_3);
-    top_frame->push_operand_stack(value_2);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->push_operand_stack(value_4);
+    frame_corrente->push_operand_stack(valor_3);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::swap()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    Valor value_2 = top_frame->pop_operand_stack();
-    assert(value_1.tipo != LONG);
-    assert(value_1.tipo != DOUBLE);
-    assert(value_2.tipo != LONG);
-    assert(value_2.tipo != DOUBLE);
-    top_frame->push_operand_stack(value_1);
-    top_frame->push_operand_stack(value_2);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo != LONG);
+    assert(valor_1.tipo != DOUBLE);
+    assert(valor_2.tipo != LONG);
+    assert(valor_2.tipo != DOUBLE);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->push_operand_stack(valor_2);
+    frame_corrente->pc++;
 }
 
 void Executor::iadd()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    value_1.dados.valor_int = value_1.dados.valor_int + (value_2.dados.valor_int);
-    value_1.tipo_print = INT;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    valor_1.dados.valor_int = valor_1.dados.valor_int + (valor_2.dados.valor_int);
+    valor_1.tipo_print = INT;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ladd()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    value_1.dados.valor_long = value_1.dados.valor_long + (value_2.dados.valor_long);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    valor_1.dados.valor_long = valor_1.dados.valor_long + (valor_2.dados.valor_long);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::fadd()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == FLOAT);
-    assert(value_1.tipo == FLOAT);
-    value_1.dados.valor_float = value_1.dados.valor_float + (value_2.dados.valor_float);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == FLOAT);
+    assert(valor_1.tipo == FLOAT);
+    valor_1.dados.valor_float = valor_1.dados.valor_float + (valor_2.dados.valor_float);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dadd()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == DOUBLE);
-    assert(value_1.tipo == DOUBLE);
-    value_1.dados.valor_double = value_1.dados.valor_double + (value_2.dados.valor_double);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == DOUBLE);
+    assert(valor_1.tipo == DOUBLE);
+    valor_1.dados.valor_double = valor_1.dados.valor_double + (valor_2.dados.valor_double);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::isub()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = value_1.dados.valor_int - (value_2.dados.valor_int);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = valor_1.dados.valor_int - (valor_2.dados.valor_int);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lsub()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    value_1.dados.valor_long = value_1.dados.valor_long - (value_2.dados.valor_long);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    valor_1.dados.valor_long = valor_1.dados.valor_long - (valor_2.dados.valor_long);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::fsub()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == FLOAT);
-    assert(value_1.tipo == FLOAT);
-    value_1.dados.valor_float = value_1.dados.valor_float - (value_2.dados.valor_float);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == FLOAT);
+    assert(valor_1.tipo == FLOAT);
+    valor_1.dados.valor_float = valor_1.dados.valor_float - (valor_2.dados.valor_float);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dsub()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == DOUBLE);
-    assert(value_1.tipo == DOUBLE);
-    value_1.dados.valor_double = value_1.dados.valor_double - (value_2.dados.valor_double);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == DOUBLE);
+    assert(valor_1.tipo == DOUBLE);
+    valor_1.dados.valor_double = valor_1.dados.valor_double - (valor_2.dados.valor_double);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::imul()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = value_1.dados.valor_int * (value_2.dados.valor_int);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = valor_1.dados.valor_int * (valor_2.dados.valor_int);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lmul()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    value_1.dados.valor_long = value_1.dados.valor_long * (value_2.dados.valor_long);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    valor_1.dados.valor_long = valor_1.dados.valor_long * (valor_2.dados.valor_long);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::fmul()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == FLOAT);
-    assert(value_1.tipo == FLOAT);
-    value_1.dados.valor_float = value_1.dados.valor_float * (value_2.dados.valor_float);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == FLOAT);
+    assert(valor_1.tipo == FLOAT);
+    valor_1.dados.valor_float = valor_1.dados.valor_float * (valor_2.dados.valor_float);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dmul()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == DOUBLE);
-    assert(value_1.tipo == DOUBLE);
-    value_1.dados.valor_double = value_1.dados.valor_double * (value_2.dados.valor_double);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == DOUBLE);
+    assert(valor_1.tipo == DOUBLE);
+    valor_1.dados.valor_double = valor_1.dados.valor_double * (valor_2.dados.valor_double);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::idiv()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    if (value_2.dados.valor_int == 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    if (valor_2.dados.valor_int == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = value_1.dados.valor_int / (value_2.dados.valor_int);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = valor_1.dados.valor_int / (valor_2.dados.valor_int);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ldiv()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    if (value_2.dados.valor_long == 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    if (valor_2.dados.valor_long == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
-    value_1.dados.valor_long = value_1.dados.valor_long / (value_2.dados.valor_long);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.dados.valor_long = valor_1.dados.valor_long / (valor_2.dados.valor_long);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::fdiv()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == FLOAT);
-    assert(value_1.tipo == FLOAT);
-    if (value_2.dados.valor_float == 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == FLOAT);
+    assert(valor_1.tipo == FLOAT);
+    if (valor_2.dados.valor_float == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
-    value_1.dados.valor_float = value_1.dados.valor_float / (value_2.dados.valor_float);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.dados.valor_float = valor_1.dados.valor_float / (valor_2.dados.valor_float);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ddiv()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == DOUBLE);
-    assert(value_1.tipo == DOUBLE);
-    if (value_2.dados.valor_double == 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == DOUBLE);
+    assert(valor_1.tipo == DOUBLE);
+    if (valor_2.dados.valor_double == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
-    value_1.dados.valor_double = value_1.dados.valor_double / (value_2.dados.valor_double);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.dados.valor_double = valor_1.dados.valor_double / (valor_2.dados.valor_double);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::irem()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    if (value_2.dados.valor_int == 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    if (valor_2.dados.valor_int == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = value_1.dados.valor_int - (value_1.dados.valor_int / value_2.dados.valor_int) * value_2.dados.valor_int;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = valor_1.dados.valor_int - (valor_1.dados.valor_int / valor_2.dados.valor_int) * valor_2.dados.valor_int;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lrem()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    if (value_2.dados.valor_long == 0) {
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    if (valor_2.dados.valor_long == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
 
-    value_1.dados.valor_long = value_1.dados.valor_long - (value_1.dados.valor_long / value_2.dados.valor_long) * value_2.dados.valor_long;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.dados.valor_long = valor_1.dados.valor_long - (valor_1.dados.valor_long / valor_2.dados.valor_long) * valor_2.dados.valor_long;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::frem()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == FLOAT);
-    assert(value_1.tipo == FLOAT);
-    if (value_2.dados.valor_float == 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == FLOAT);
+    assert(valor_1.tipo == FLOAT);
+    if (valor_2.dados.valor_float == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
 
-    value_1.dados.valor_float = value_1.dados.valor_float
-        - ((uint32_t)(value_1.dados.valor_float / value_2.dados.valor_float)) * value_2.dados.valor_float;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.dados.valor_float = valor_1.dados.valor_float
+        - ((uint32_t)(valor_1.dados.valor_float / valor_2.dados.valor_float)) * valor_2.dados.valor_float;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::drem()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_2.tipo == DOUBLE);
-    assert(value_1.tipo == DOUBLE);
-    if (value_2.dados.valor_double == 0) {
+    assert(valor_2.tipo == DOUBLE);
+    assert(valor_1.tipo == DOUBLE);
+    if (valor_2.dados.valor_double == 0) {
         cerr << "ArithmeticException" << endl;
         exit(2);
     }
 
-    value_1.dados.valor_double = value_1.dados.valor_double
-        - ((uint64_t)(value_1.dados.valor_double / value_2.dados.valor_double)) * value_2.dados.valor_double;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.dados.valor_double = valor_1.dados.valor_double
+        - ((uint64_t)(valor_1.dados.valor_double / valor_2.dados.valor_double)) * valor_2.dados.valor_double;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ineg()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == INT);
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = -value_1.dados.valor_int;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == INT);
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = -valor_1.dados.valor_int;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lneg()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
 
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == LONG);
-    value_1.dados.valor_long = -value_1.dados.valor_long;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == LONG);
+    valor_1.dados.valor_long = -valor_1.dados.valor_long;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::fneg()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == FLOAT);
-    value_1.dados.valor_float = -value_1.dados.valor_float;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == FLOAT);
+    valor_1.dados.valor_float = -valor_1.dados.valor_float;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::dneg()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
 
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == DOUBLE);
-    value_1.dados.valor_double = -value_1.dados.valor_double;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == DOUBLE);
+    valor_1.dados.valor_double = -valor_1.dados.valor_double;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ishl()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
 
-    value_2.dados.valor_int = 0x1f & value_2.dados.valor_int;
-    value_1.dados.valor_int = value_1.dados.valor_int << value_2.dados.valor_int;
-    value_1.tipo_print = INT;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_2.dados.valor_int = 0x1f & valor_2.dados.valor_int;
+    valor_1.dados.valor_int = valor_1.dados.valor_int << valor_2.dados.valor_int;
+    valor_1.tipo_print = INT;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lshl()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == LONG);
-    value_2.dados.valor_long = 0x3f & value_2.dados.valor_long;
-    value_1.dados.valor_long = (value_1.dados.valor_long) << value_2.dados.valor_int;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == LONG);
+    valor_2.dados.valor_long = 0x3f & valor_2.dados.valor_long;
+    valor_1.dados.valor_long = (valor_1.dados.valor_long) << valor_2.dados.valor_int;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ishr()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
 
-    value_2.dados.valor_int = 0x1f & value_2.dados.valor_int;
-    value_1.dados.valor_int = value_1.dados.valor_int >> value_2.dados.valor_int;
-    value_1.tipo_print = INT;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_2.dados.valor_int = 0x1f & valor_2.dados.valor_int;
+    valor_1.dados.valor_int = valor_1.dados.valor_int >> valor_2.dados.valor_int;
+    valor_1.tipo_print = INT;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lshr()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == LONG);
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == LONG);
 
-    value_2.dados.valor_long = 0x3f & value_2.dados.valor_long;
-    value_1.dados.valor_long = value_1.dados.valor_long >> value_2.dados.valor_long;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_2.dados.valor_long = 0x3f & valor_2.dados.valor_long;
+    valor_1.dados.valor_long = valor_1.dados.valor_long >> valor_2.dados.valor_long;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::iushr()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    value_2.dados.valor_int = 0x1f & value_2.dados.valor_int;
-    value_1.dados.valor_int = value_1.dados.valor_int >> value_2.dados.valor_int;
-    if (value_1.dados.valor_int < 0) {
-        value_1.dados.valor_int = value_1.dados.valor_int + (2 << ~(value_2.dados.valor_int));
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    valor_2.dados.valor_int = 0x1f & valor_2.dados.valor_int;
+    valor_1.dados.valor_int = valor_1.dados.valor_int >> valor_2.dados.valor_int;
+    if (valor_1.dados.valor_int < 0) {
+        valor_1.dados.valor_int = valor_1.dados.valor_int + (2 << ~(valor_2.dados.valor_int));
     }
-    value_1.tipo_print = INT;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.tipo_print = INT;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lushr()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == LONG);
-    value_2.dados.valor_int = 0x3f & value_2.dados.valor_int;
-    value_1.dados.valor_long = value_1.dados.valor_long >> value_2.dados.valor_int;
-    if (value_1.dados.valor_long < 0) {
-        value_1.dados.valor_long = value_1.dados.valor_long + ((int64_t)2 << ~(value_2.dados.valor_int));
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == LONG);
+    valor_2.dados.valor_int = 0x3f & valor_2.dados.valor_int;
+    valor_1.dados.valor_long = valor_1.dados.valor_long >> valor_2.dados.valor_int;
+    if (valor_1.dados.valor_long < 0) {
+        valor_1.dados.valor_long = valor_1.dados.valor_long + ((int64_t)2 << ~(valor_2.dados.valor_int));
     }
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::iand()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = value_1.dados.valor_int & value_2.dados.valor_int;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = valor_1.dados.valor_int & valor_2.dados.valor_int;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::land()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
 
-    value_1.dados.valor_long = value_1.dados.valor_long & value_2.dados.valor_long;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    valor_1.dados.valor_long = valor_1.dados.valor_long & valor_2.dados.valor_long;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ior()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = value_1.dados.valor_int | value_2.dados.valor_int;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = valor_1.dados.valor_int | valor_2.dados.valor_int;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lor()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    value_1.dados.valor_long = value_1.dados.valor_long | value_2.dados.valor_long;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    valor_1.dados.valor_long = valor_1.dados.valor_long | valor_2.dados.valor_long;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::ixor()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_2.tipo == INT);
-    assert(value_1.tipo == INT);
-    value_1.tipo_print = INT;
-    value_1.dados.valor_int = value_1.dados.valor_int ^ value_2.dados.valor_int;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_2.tipo == INT);
+    assert(valor_1.tipo == INT);
+    valor_1.tipo_print = INT;
+    valor_1.dados.valor_int = valor_1.dados.valor_int ^ valor_2.dados.valor_int;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lxor()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    value_1.dados.valor_long = value_1.dados.valor_long ^ value_2.dados.valor_long;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    valor_1.dados.valor_long = valor_1.dados.valor_long ^ valor_2.dados.valor_long;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::iinc()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u2 index = 0;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u2 indice = 0;
     if (is_wide) {
-        index = (code[1] << 8) | code[2];
+        indice = (codigo[1] << 8) | codigo[2];
     } else {
-        index += code[1];
+        indice += codigo[1];
     }
-    Valor localVariable = top_frame->get_local_variable_value(index);
-    assert(localVariable.tipo == INT);
+    Valor variavel_local = frame_corrente->get_local_variable_value(indice);
+    assert(variavel_local.tipo == INT);
     int32_t inc;
     if (is_wide) {
-        uint16_t constant = (code[3] << 8) | code[4];
+        uint16_t constant = (codigo[3] << 8) | codigo[4];
         inc = (int32_t)(int16_t)constant;
     } else {
-        inc = (int32_t)(int8_t)code[2];
+        inc = (int32_t)(int8_t)codigo[2];
     }
-    localVariable.dados.valor_int += inc;
-    top_frame->set_local_variable(localVariable, index);
-    top_frame->pc += is_wide ? 5 : 3;
+    variavel_local.dados.valor_int += inc;
+    frame_corrente->set_local_variable(variavel_local, indice);
+    frame_corrente->pc += is_wide ? 5 : 3;
     is_wide = false;
 }
 
 void Executor::i2l()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == INT);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == INT);
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    value_1 = faz_valor_long((int64_t)value_1.dados.valor_int);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(padding);
+    valor_1 = faz_valor_long((int64_t)valor_1.dados.valor_int);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::i2f()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == INT);
-    value_1 = faz_valor_float((float)value_1.dados.valor_int);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == INT);
+    valor_1 = faz_valor_float((float)valor_1.dados.valor_int);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::i2d()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == INT);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == INT);
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    value_1 = faz_valor_double((double)value_1.dados.valor_int);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(padding);
+    valor_1 = faz_valor_double((double)valor_1.dados.valor_int);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::l2i()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    assert(value_1.tipo == LONG);
-    value_1 = faz_valor_int((int32_t)value_1.dados.valor_int);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == LONG);
+    valor_1 = faz_valor_int((int32_t)valor_1.dados.valor_int);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::l2f()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    assert(value_1.tipo == LONG);
-    value_1 = faz_valor_float((float)value_1.dados.valor_long);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == LONG);
+    valor_1 = faz_valor_float((float)valor_1.dados.valor_long);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::l2d()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_1.tipo == LONG);
-    value_1 = faz_valor_double((double)value_1.dados.valor_long);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    assert(valor_1.tipo == LONG);
+    valor_1 = faz_valor_double((double)valor_1.dados.valor_long);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::f2i()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == FLOAT);
-    value_1 = faz_valor_int((int32_t)value_1.dados.valor_float);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == FLOAT);
+    valor_1 = faz_valor_int((int32_t)valor_1.dados.valor_float);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::f2l()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == FLOAT);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == FLOAT);
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    value_1 = faz_valor_long((int64_t)value_1.dados.valor_float);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(padding);
+    valor_1 = faz_valor_long((int64_t)valor_1.dados.valor_float);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::f2d()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == FLOAT);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == FLOAT);
     Valor padding = faz_valor_padding();
-    top_frame->push_operand_stack(padding);
-    value_1 = faz_valor_double((double)value_1.dados.valor_float);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(padding);
+    valor_1 = faz_valor_double((double)valor_1.dados.valor_float);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::d2i()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    assert(value_1.tipo == DOUBLE);
-    value_1 = faz_valor_int((int32_t)value_1.dados.valor_double);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == DOUBLE);
+    valor_1 = faz_valor_int((int32_t)valor_1.dados.valor_double);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::d2l()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
 
-    assert(value_1.tipo == DOUBLE);
-    value_1 = faz_valor_long((int64_t)value_1.dados.valor_double);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    assert(valor_1.tipo == DOUBLE);
+    valor_1 = faz_valor_long((int64_t)valor_1.dados.valor_double);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::d2f()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    assert(value_1.tipo == DOUBLE);
-    value_1 = faz_valor_float((float)value_1.dados.valor_double);
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == DOUBLE);
+    valor_1 = faz_valor_float((float)valor_1.dados.valor_double);
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::i2b()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == INT);
-    value_1 = faz_valor_int((int32_t)(int8_t)value_1.dados.valor_int);
-    value_1.tipo_print = BYTE;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == INT);
+    valor_1 = faz_valor_int((int32_t)(int8_t)valor_1.dados.valor_int);
+    valor_1.tipo_print = BYTE;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::i2c()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == INT);
-    value_1 = faz_valor_char((uint8_t)value_1.dados.valor_int);
-    value_1.tipo = INT;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == INT);
+    valor_1 = faz_valor_char((uint8_t)valor_1.dados.valor_int);
+    valor_1.tipo = INT;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::i2s()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_1 = top_frame->pop_operand_stack();
-    assert(value_1.tipo == INT);
-    value_1 = faz_valor_short((int16_t)value_1.dados.valor_int);
-    value_1.tipo = INT;
-    top_frame->push_operand_stack(value_1);
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    assert(valor_1.tipo == INT);
+    valor_1 = faz_valor_short((int16_t)valor_1.dados.valor_int);
+    valor_1.tipo = INT;
+    frame_corrente->push_operand_stack(valor_1);
+    frame_corrente->pc++;
 }
 
 void Executor::lcmp()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor result = faz_valor_int(0);
-    assert(value_2.tipo == LONG);
-    assert(value_1.tipo == LONG);
-    if (value_1.dados.valor_long > value_2.dados.valor_long) {
-        result.dados.valor_int = 1;
-    } else if (value_1.dados.valor_long == value_2.dados.valor_long) {
-        result.dados.valor_int = 0;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor resultado = faz_valor_int(0);
+    assert(valor_2.tipo == LONG);
+    assert(valor_1.tipo == LONG);
+    if (valor_1.dados.valor_long > valor_2.dados.valor_long) {
+        resultado.dados.valor_int = 1;
+    } else if (valor_1.dados.valor_long == valor_2.dados.valor_long) {
+        resultado.dados.valor_int = 0;
     } else {
-        result.dados.valor_int = -1;
+        resultado.dados.valor_int = -1;
     }
-    top_frame->push_operand_stack(result);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(resultado);
+    frame_corrente->pc++;
 }
 
 void Executor::fcmpl()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    Valor result = faz_valor_int(0);
-    assert(value_2.tipo == FLOAT);
-    assert(value_1.tipo == FLOAT);
-    if (isnan(value_1.dados.valor_float) || isnan(value_2.dados.valor_float)) {
-        result.dados.valor_int = -1;
-    } else if (value_1.dados.valor_float > value_2.dados.valor_float) {
-        result.dados.valor_int = 1;
-    } else if (value_1.dados.valor_float == value_2.dados.valor_float) {
-        result.dados.valor_int = 0;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    Valor resultado = faz_valor_int(0);
+    assert(valor_2.tipo == FLOAT);
+    assert(valor_1.tipo == FLOAT);
+    if (isnan(valor_1.dados.valor_float) || isnan(valor_2.dados.valor_float)) {
+        resultado.dados.valor_int = -1;
+    } else if (valor_1.dados.valor_float > valor_2.dados.valor_float) {
+        resultado.dados.valor_int = 1;
+    } else if (valor_1.dados.valor_float == valor_2.dados.valor_float) {
+        resultado.dados.valor_int = 0;
     } else {
-        result.dados.valor_int = -1;
+        resultado.dados.valor_int = -1;
     }
-    top_frame->push_operand_stack(result);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(resultado);
+    frame_corrente->pc++;
 }
 
 void Executor::fcmpg()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    Valor result = faz_valor_int(0);
-    assert(value_2.tipo == FLOAT);
-    assert(value_1.tipo == FLOAT);
-    if (isnan(value_1.dados.valor_float) || isnan(value_2.dados.valor_float)) {
-        result.dados.valor_int = 1;
-    } else if (value_1.dados.valor_float > value_2.dados.valor_float) {
-        result.dados.valor_int = 1;
-    } else if (value_1.dados.valor_float == value_2.dados.valor_float) {
-        result.dados.valor_int = 0;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    Valor resultado = faz_valor_int(0);
+    assert(valor_2.tipo == FLOAT);
+    assert(valor_1.tipo == FLOAT);
+    if (isnan(valor_1.dados.valor_float) || isnan(valor_2.dados.valor_float)) {
+        resultado.dados.valor_int = 1;
+    } else if (valor_1.dados.valor_float > valor_2.dados.valor_float) {
+        resultado.dados.valor_int = 1;
+    } else if (valor_1.dados.valor_float == valor_2.dados.valor_float) {
+        resultado.dados.valor_int = 0;
     } else {
-        result.dados.valor_int = -1;
+        resultado.dados.valor_int = -1;
     }
-    top_frame->push_operand_stack(result);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(resultado);
+    frame_corrente->pc++;
 }
 
 void Executor::dcmpl()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor result = faz_valor_int(0);
-    assert(value_2.tipo == DOUBLE);
-    assert(value_1.tipo == DOUBLE);
-    if (isnan(value_1.dados.valor_double) || isnan(value_2.dados.valor_double)) {
-        result.dados.valor_int = -1;
-    } else if (value_1.dados.valor_double > value_2.dados.valor_double) {
-        result.dados.valor_int = 1;
-    } else if (value_1.dados.valor_double == value_2.dados.valor_double) {
-        result.dados.valor_int = 0;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor resultado = faz_valor_int(0);
+    assert(valor_2.tipo == DOUBLE);
+    assert(valor_1.tipo == DOUBLE);
+    if (isnan(valor_1.dados.valor_double) || isnan(valor_2.dados.valor_double)) {
+        resultado.dados.valor_int = -1;
+    } else if (valor_1.dados.valor_double > valor_2.dados.valor_double) {
+        resultado.dados.valor_int = 1;
+    } else if (valor_1.dados.valor_double == valor_2.dados.valor_double) {
+        resultado.dados.valor_int = 0;
     } else {
-        result.dados.valor_int = -1;
+        resultado.dados.valor_int = -1;
     }
-    top_frame->push_operand_stack(result);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(resultado);
+    frame_corrente->pc++;
 }
 
 void Executor::dcmpg()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value_2 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor value_1 = top_frame->pop_operand_stack();
-    top_frame->pop_operand_stack();
-    Valor result = faz_valor_int(0);
-    assert(value_2.tipo == DOUBLE);
-    assert(value_1.tipo == DOUBLE);
-    if (isnan(value_1.dados.valor_double) || isnan(value_2.dados.valor_double)) {
-        result.dados.valor_int = 1;
-    } else if (value_1.dados.valor_double > value_2.dados.valor_double) {
-        result.dados.valor_int = 1;
-    } else if (value_1.dados.valor_double == value_2.dados.valor_double) {
-        result.dados.valor_int = 0;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_2 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor valor_1 = frame_corrente->pop_operand_stack();
+    frame_corrente->pop_operand_stack();
+    Valor resultado = faz_valor_int(0);
+    assert(valor_2.tipo == DOUBLE);
+    assert(valor_1.tipo == DOUBLE);
+    if (isnan(valor_1.dados.valor_double) || isnan(valor_2.dados.valor_double)) {
+        resultado.dados.valor_int = 1;
+    } else if (valor_1.dados.valor_double > valor_2.dados.valor_double) {
+        resultado.dados.valor_int = 1;
+    } else if (valor_1.dados.valor_double == valor_2.dados.valor_double) {
+        resultado.dados.valor_int = 0;
     } else {
-        result.dados.valor_int = -1;
+        resultado.dados.valor_int = -1;
     }
-    top_frame->push_operand_stack(result);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(resultado);
+    frame_corrente->pc++;
 }
 
 void Executor::ifeq()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    if (value.dados.valor_int == 0) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    if (valor.dados.valor_int == 0) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::ifne()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    if (value.dados.valor_int != 0) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    if (valor.dados.valor_int != 0) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::iflt()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    if (value.dados.valor_int < 0) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    if (valor.dados.valor_int < 0) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::ifge()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    if (value.dados.valor_int >= 0) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    if (valor.dados.valor_int >= 0) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::ifgt()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    if (value.dados.valor_int > 0) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    if (valor.dados.valor_int > 0) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::ifle()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value = top_frame->pop_operand_stack();
-    assert(value.tipo == INT);
-    if (value.dados.valor_int <= 0) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor = frame_corrente->pop_operand_stack();
+    assert(valor.tipo == INT);
+    if (valor.dados.valor_int <= 0) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_icmpeq()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == INT);
     assert(value2.tipo == INT);
     if (value1.dados.valor_int == value2.dados.valor_int) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_icmpne()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == INT);
     assert(value2.tipo == INT);
     if (value1.dados.valor_int != value2.dados.valor_int) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_icmplt()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == INT);
     assert(value2.tipo == INT);
     if (value1.dados.valor_int < value2.dados.valor_int) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_icmpge()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == INT);
     assert(value2.tipo == INT);
     if (value1.dados.valor_int >= value2.dados.valor_int) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_icmpgt()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == INT);
     assert(value2.tipo == INT);
     if (value1.dados.valor_int > value2.dados.valor_int) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_icmple()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == INT);
     assert(value2.tipo == INT);
     if (value1.dados.valor_int <= value2.dados.valor_int) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_acmpeq()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == REFERENCIA);
     assert(value2.tipo == REFERENCIA);
     if (value1.dados.objeto == value2.dados.objeto) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::if_acmpne()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor value2 = top_frame->pop_operand_stack();
-    Valor value1 = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor value2 = frame_corrente->pop_operand_stack();
+    Valor value1 = frame_corrente->pop_operand_stack();
     assert(value1.tipo == REFERENCIA);
     assert(value2.tipo == REFERENCIA);
     if (value1.dados.objeto != value2.dados.objeto) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
-        int16_t branchOffset = (byte1 << 8) | byte2;
-        top_frame->pc += branchOffset;
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
+        int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+        frame_corrente->pc += deslocamento_desvio;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::func_goto()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    int16_t branchOffset = (byte1 << 8) | byte2;
-    top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+    frame_corrente->pc += deslocamento_desvio;
 }
 
 void Executor::jsr()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    int16_t branchOffset = (byte1 << 8) | byte2;
-    Valor returnAddr = faz_valor_endereco_retorno(top_frame->pc + 3);
-    top_frame->push_operand_stack(returnAddr);
-    top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    int16_t deslocamento_desvio = (byte1 << 8) | byte2;
+    Valor endereco_retorno = faz_valor_endereco_retorno(frame_corrente->pc + 3);
+    frame_corrente->push_operand_stack(endereco_retorno);
+    frame_corrente->pc += deslocamento_desvio;
 }
 
 void Executor::ret()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    uint16_t index = (uint16_t)byte1;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    uint16_t indice = (uint16_t)byte1;
     if (is_wide) {
-        u1 byte2 = code[2];
-        index = (byte1 << 8) | byte2;
+        u1 byte2 = codigo[2];
+        indice = (byte1 << 8) | byte2;
     }
-    assert(((int16_t)(top_frame->get_local_variables_vector_size()) > index));
-    Valor value = top_frame->get_local_variable_value(index);
-    assert(value.tipo == ENDERECO_RETORNO);
-    top_frame->set_local_variable(value, index);
-    top_frame->pc = value.dados.endereco_retorno;
+    assert(((int16_t)(frame_corrente->get_local_variables_vector_size()) > indice));
+    Valor valor = frame_corrente->get_local_variable_value(indice);
+    assert(valor.tipo == ENDERECO_RETORNO);
+    frame_corrente->set_local_variable(valor, indice);
+    frame_corrente->pc = valor.dados.endereco_retorno;
     is_wide = false;
 }
 
 void Executor::tableswitch()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 padding = 4 - (top_frame->pc + 1) % 4;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 padding = 4 - (frame_corrente->pc + 1) % 4;
     padding = (padding == 4) ? 0 : padding;
-    u1 defaultbyte1 = code[padding + 1];
-    u1 defaultbyte2 = code[padding + 2];
-    u1 defaultbyte3 = code[padding + 3];
-    u1 defaultbyte4 = code[padding + 4];
-    int32_t defaultBytes = (defaultbyte1 << 24) | (defaultbyte2 << 16) | (defaultbyte3 << 8) | defaultbyte4;
-    u1 lowbyte1 = code[padding + 5];
-    u1 lowbyte2 = code[padding + 6];
-    u1 lowbyte3 = code[padding + 7];
-    u1 lowbyte4 = code[padding + 8];
+    u1 defaultbyte1 = codigo[padding + 1];
+    u1 defaultbyte2 = codigo[padding + 2];
+    u1 defaultbyte3 = codigo[padding + 3];
+    u1 defaultbyte4 = codigo[padding + 4];
+    int32_t bytes_default = (defaultbyte1 << 24) | (defaultbyte2 << 16) | (defaultbyte3 << 8) | defaultbyte4;
+    u1 lowbyte1 = codigo[padding + 5];
+    u1 lowbyte2 = codigo[padding + 6];
+    u1 lowbyte3 = codigo[padding + 7];
+    u1 lowbyte4 = codigo[padding + 8];
     uint32_t lowbytes = (lowbyte1 << 24) | (lowbyte2 << 16) | (lowbyte3 << 8) | lowbyte4;
-    u1 highbyte1 = code[padding + 9];
-    u1 highbyte2 = code[padding + 10];
-    u1 highbyte3 = code[padding + 11];
-    u1 highbyte4 = code[padding + 12];
+    u1 highbyte1 = codigo[padding + 9];
+    u1 highbyte2 = codigo[padding + 10];
+    u1 highbyte3 = codigo[padding + 11];
+    u1 highbyte4 = codigo[padding + 12];
     uint32_t highbytes = (highbyte1 << 24) | (highbyte2 << 16) | (highbyte3 << 8) | highbyte4;
-    Valor keyValue = top_frame->pop_operand_stack();
-    assert(keyValue.tipo == INT);
-    int32_t key = keyValue.dados.valor_int;
+    Valor valor_chave = frame_corrente->pop_operand_stack();
+    assert(valor_chave.tipo == INT);
+    int32_t chave = valor_chave.dados.valor_int;
     uint32_t i;
-    uint32_t baseIndex = padding + 13;
+    uint32_t indice_base = padding + 13;
     int32_t offsets = highbytes - lowbytes + 1;
     bool matched = false;
     for (i = 0; i < (unsigned)offsets; i++) {
-        if ((unsigned)key == (unsigned)lowbytes) {
-            int32_t offset = (code[baseIndex] << 24) | (code[baseIndex + 1] << 16) | (code[baseIndex + 2] << 8) | code[baseIndex + 3];
-            top_frame->pc += offset;
+        if ((unsigned)chave == (unsigned)lowbytes) {
+            int32_t deslocamento = (codigo[indice_base] << 24) | (codigo[indice_base + 1] << 16) | (codigo[indice_base + 2] << 8) | codigo[indice_base + 3];
+            frame_corrente->pc += deslocamento;
             matched = true;
             break;
         }
         lowbytes++;
-        baseIndex += 4;
+        indice_base += 4;
     }
     if (!matched) {
-        top_frame->pc += defaultBytes;
+        frame_corrente->pc += bytes_default;
     }
 }
 
 void Executor::lookupswitch()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 padding = 4 - (top_frame->pc + 1) % 4;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 padding = 4 - (frame_corrente->pc + 1) % 4;
     padding = (padding == 4) ? 0 : padding;
-    u1 defaultbyte1 = code[padding + 1];
-    u1 defaultbyte2 = code[padding + 2];
-    u1 defaultbyte3 = code[padding + 3];
-    u1 defaultbyte4 = code[padding + 4];
-    int32_t defaultBytes = (defaultbyte1 << 24) | (defaultbyte2 << 16) | (defaultbyte3 << 8) | defaultbyte4;
-    u1 npairs1 = code[padding + 5];
-    u1 npairs2 = code[padding + 6];
-    u1 npairs3 = code[padding + 7];
-    u1 npairs4 = code[padding + 8];
+    u1 defaultbyte1 = codigo[padding + 1];
+    u1 defaultbyte2 = codigo[padding + 2];
+    u1 defaultbyte3 = codigo[padding + 3];
+    u1 defaultbyte4 = codigo[padding + 4];
+    int32_t bytes_default = (defaultbyte1 << 24) | (defaultbyte2 << 16) | (defaultbyte3 << 8) | defaultbyte4;
+    u1 npairs1 = codigo[padding + 5];
+    u1 npairs2 = codigo[padding + 6];
+    u1 npairs3 = codigo[padding + 7];
+    u1 npairs4 = codigo[padding + 8];
     uint32_t npairs = (npairs1 << 24) | (npairs2 << 16) | (npairs3 << 8) | npairs4;
-    Valor keyValue = top_frame->pop_operand_stack();
-    assert(keyValue.tipo == INT);
-    int32_t key = keyValue.dados.valor_int;
+    Valor valor_chave = frame_corrente->pop_operand_stack();
+    assert(valor_chave.tipo == INT);
+    int32_t chave = valor_chave.dados.valor_int;
     uint32_t i;
-    uint32_t baseIndex = padding + 9;
+    uint32_t indice_base = padding + 9;
     bool matched = false;
     for (i = 0; i < npairs; i++) {
-        int32_t match = (code[baseIndex] << 24) | (code[baseIndex + 1] << 16) | (code[baseIndex + 2] << 8) | code[baseIndex + 3];
-        if (key == match) {
-            int32_t offset = (code[baseIndex + 4] << 24) | (code[baseIndex + 5] << 16) | (code[baseIndex + 6] << 8) | code[baseIndex + 7];
-            top_frame->pc += offset;
+        int32_t match = (codigo[indice_base] << 24) | (codigo[indice_base + 1] << 16) | (codigo[indice_base + 2] << 8) | codigo[indice_base + 3];
+        if (chave == match) {
+            int32_t deslocamento = (codigo[indice_base + 4] << 24) | (codigo[indice_base + 5] << 16) | (codigo[indice_base + 6] << 8) | codigo[indice_base + 7];
+            frame_corrente->pc += deslocamento;
             matched = true;
             break;
         }
-        baseIndex += 8;
+        indice_base += 8;
     }
     if (!matched) {
-        top_frame->pc += defaultBytes;
+        frame_corrente->pc += bytes_default;
     }
 }
 
 void Executor::ireturn()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor returnValue = top_frame->pop_operand_stack();
-    assert(returnValue.tipo == INT);
-    stack_frame.desempilhar_frame();
-    Frame* newTopFrame = stack_frame.frame_topo();
-    newTopFrame->push_operand_stack(returnValue);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_retorno = frame_corrente->pop_operand_stack();
+    assert(valor_retorno.tipo == INT);
+    pilha_execucao.desempilhar_frame();
+    Frame* novo_frame_topo = pilha_execucao.frame_topo();
+    novo_frame_topo->push_operand_stack(valor_retorno);
 }
 
 void Executor::lreturn()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor returnValue = top_frame->pop_operand_stack();
-    assert(returnValue.tipo == LONG);
-    assert(top_frame->pop_operand_stack().tipo == PADDING);
-    stack_frame.desempilhar_frame();
-    Frame* newTopFrame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_retorno = frame_corrente->pop_operand_stack();
+    assert(valor_retorno.tipo == LONG);
+    assert(frame_corrente->pop_operand_stack().tipo == PADDING);
+    pilha_execucao.desempilhar_frame();
+    Frame* novo_frame_topo = pilha_execucao.frame_topo();
     Valor padding = faz_valor_padding();
-    newTopFrame->push_operand_stack(padding);
-    newTopFrame->push_operand_stack(returnValue);
+    novo_frame_topo->push_operand_stack(padding);
+    novo_frame_topo->push_operand_stack(valor_retorno);
 }
 
 void Executor::freturn()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor returnValue = top_frame->pop_operand_stack();
-    assert(returnValue.tipo == FLOAT);
-    stack_frame.desempilhar_frame();
-    Frame* newTopFrame = stack_frame.frame_topo();
-    newTopFrame->push_operand_stack(returnValue);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_retorno = frame_corrente->pop_operand_stack();
+    assert(valor_retorno.tipo == FLOAT);
+    pilha_execucao.desempilhar_frame();
+    Frame* novo_frame_topo = pilha_execucao.frame_topo();
+    novo_frame_topo->push_operand_stack(valor_retorno);
 }
 
 void Executor::dreturn()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor returnValue = top_frame->pop_operand_stack();
-    assert(returnValue.tipo == DOUBLE);
-    assert(top_frame->pop_operand_stack().tipo == PADDING);
-    stack_frame.desempilhar_frame();
-    Frame* newTopFrame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_retorno = frame_corrente->pop_operand_stack();
+    assert(valor_retorno.tipo == DOUBLE);
+    assert(frame_corrente->pop_operand_stack().tipo == PADDING);
+    pilha_execucao.desempilhar_frame();
+    Frame* novo_frame_topo = pilha_execucao.frame_topo();
     Valor padding = faz_valor_padding();
-    newTopFrame->push_operand_stack(padding);
-    newTopFrame->push_operand_stack(returnValue);
+    novo_frame_topo->push_operand_stack(padding);
+    novo_frame_topo->push_operand_stack(valor_retorno);
 }
 
 void Executor::areturn()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor returnValue = top_frame->pop_operand_stack();
-    assert(returnValue.tipo == REFERENCIA);
-    stack_frame.desempilhar_frame();
-    Frame* newTopFrame = stack_frame.frame_topo();
-    newTopFrame->push_operand_stack(returnValue);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_retorno = frame_corrente->pop_operand_stack();
+    assert(valor_retorno.tipo == REFERENCIA);
+    pilha_execucao.desempilhar_frame();
+    Frame* novo_frame_topo = pilha_execucao.frame_topo();
+    novo_frame_topo->push_operand_stack(valor_retorno);
 }
 
 void Executor::func_return()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    stack_frame.desempilhar_frame();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    pilha_execucao.desempilhar_frame();
 }
 
 void Executor::getstatic()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t fieldIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo fieldCP = constant_pool[fieldIndex - 1];
-    assert(fieldCP.tag == ConstFieldRef);
-    ConstFieldRefInfo fieldRef = fieldCP.info.field_ref_info;
-    string className = formatar_constante(constant_pool, fieldRef.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[fieldRef.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo fieldNameAndType = nameAndTypeCP.info.name_type_info;
-    string fieldName = formatar_constante(constant_pool, fieldNameAndType.name_index);
-    string fieldDescriptor = formatar_constante(constant_pool, fieldNameAndType.descriptor_index);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_campo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_campo = constant_pool[indice_campo - 1];
+    assert(cp_campo.tag == ConstFieldRef);
+    ConstFieldRefInfo ref_campo = cp_campo.info.field_ref_info;
+    string nome_classe = formatar_constante(constant_pool, ref_campo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[ref_campo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_campo = cp_nome_tipo.info.name_type_info;
+    string nome_campo = formatar_constante(constant_pool, nome_tipo_campo.name_index);
+    string descritor_campo = formatar_constante(constant_pool, nome_tipo_campo.descriptor_index);
 
-    if (className == "java/lang/System" && fieldDescriptor == "Ljava/io/PrintStream;") {
-        top_frame->pc += 3;
+    if (nome_classe == "java/lang/System" && descritor_campo == "Ljava/io/PrintStream;") {
+        frame_corrente->pc += 3;
         return;
     }
 
-    AreaMetodos& methodArea = AreaMetodos::instancia();
-    ClasseEstatica* class_runtime = methodArea.carregar_classe(className);
-    while (class_runtime != NULL) {
-        if (class_runtime->check_field(fieldName) == false) {
-            if (class_runtime->get_arquivo_classe()->super_class == 0) {
-                class_runtime = NULL;
+    AreaMetodos& area_metodos = AreaMetodos::instancia();
+    ClasseEstatica* classe_runtime = area_metodos.carregar_classe(nome_classe);
+    while (classe_runtime != NULL) {
+        if (classe_runtime->check_field(nome_campo) == false) {
+            if (classe_runtime->get_arquivo_classe()->super_class == 0) {
+                classe_runtime = NULL;
             } else {
-                string superClassName = formatar_constante(class_runtime->get_arquivo_classe()->constant_pool,
-                    class_runtime->get_arquivo_classe()->super_class);
-                class_runtime = methodArea.carregar_classe(superClassName);
+                string nome_super_classe = formatar_constante(classe_runtime->get_arquivo_classe()->constant_pool,
+                    classe_runtime->get_arquivo_classe()->super_class);
+                classe_runtime = area_metodos.carregar_classe(nome_super_classe);
             }
         } else {
             break;
         }
     }
-    if (class_runtime == NULL) {
+    if (classe_runtime == NULL) {
         cerr << "NoSuchFieldError" << endl;
         exit(1);
     }
 
-    if (stack_frame.frame_topo() != top_frame)
+    if (pilha_execucao.frame_topo() != frame_corrente)
         return;
-    Valor staticValue = class_runtime->get_value(fieldName);
-    switch (staticValue.tipo) {
+    Valor valor_estatico = classe_runtime->get_value(nome_campo);
+    switch (valor_estatico.tipo) {
     case BOOLEANO:
-        staticValue.tipo = INT;
-        staticValue.tipo_print = BOOLEANO;
+        valor_estatico.tipo = INT;
+        valor_estatico.tipo_print = BOOLEANO;
         break;
     case BYTE:
-        staticValue.tipo = INT;
-        staticValue.tipo_print = BYTE;
+        valor_estatico.tipo = INT;
+        valor_estatico.tipo_print = BYTE;
         break;
     case SHORT:
-        staticValue.tipo = INT;
-        staticValue.tipo_print = SHORT;
+        valor_estatico.tipo = INT;
+        valor_estatico.tipo_print = SHORT;
         break;
     case INT:
-        staticValue.tipo = INT;
-        staticValue.tipo_print = INT;
+        valor_estatico.tipo = INT;
+        valor_estatico.tipo_print = INT;
         break;
     default:
         break;
     }
-    if (staticValue.tipo == DOUBLE || staticValue.tipo == LONG) {
-        Valor paddingValue = faz_valor_padding();
-        top_frame->push_operand_stack(paddingValue);
+    if (valor_estatico.tipo == DOUBLE || valor_estatico.tipo == LONG) {
+        Valor valor_padding = faz_valor_padding();
+        frame_corrente->push_operand_stack(valor_padding);
     }
-    top_frame->push_operand_stack(staticValue);
-    top_frame->pc += 3;
+    frame_corrente->push_operand_stack(valor_estatico);
+    frame_corrente->pc += 3;
 }
 
 void Executor::putstatic()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t fieldIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo fieldCP = constant_pool[fieldIndex - 1];
-    assert(fieldCP.tag == ConstFieldRef);
-    ConstFieldRefInfo fieldRef = fieldCP.info.field_ref_info;
-    string className = formatar_constante(constant_pool, fieldRef.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[fieldRef.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo fieldNameAndType = nameAndTypeCP.info.name_type_info;
-    string fieldName = formatar_constante(constant_pool, fieldNameAndType.name_index);
-    string fieldDescriptor = formatar_constante(constant_pool, fieldNameAndType.descriptor_index);
-    AreaMetodos& methodArea = AreaMetodos::instancia();
-    ClasseEstatica* class_runtime = methodArea.carregar_classe(className);
-    while (class_runtime != NULL) {
-        if (class_runtime->check_field(fieldName) == false) {
-            if (class_runtime->get_arquivo_classe()->super_class == 0) {
-                class_runtime = NULL;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_campo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_campo = constant_pool[indice_campo - 1];
+    assert(cp_campo.tag == ConstFieldRef);
+    ConstFieldRefInfo ref_campo = cp_campo.info.field_ref_info;
+    string nome_classe = formatar_constante(constant_pool, ref_campo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[ref_campo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_campo = cp_nome_tipo.info.name_type_info;
+    string nome_campo = formatar_constante(constant_pool, nome_tipo_campo.name_index);
+    string descritor_campo = formatar_constante(constant_pool, nome_tipo_campo.descriptor_index);
+    AreaMetodos& area_metodos = AreaMetodos::instancia();
+    ClasseEstatica* classe_runtime = area_metodos.carregar_classe(nome_classe);
+    while (classe_runtime != NULL) {
+        if (classe_runtime->check_field(nome_campo) == false) {
+            if (classe_runtime->get_arquivo_classe()->super_class == 0) {
+                classe_runtime = NULL;
             } else {
-                string superClassName = formatar_constante(class_runtime->get_arquivo_classe()->constant_pool,
-                    class_runtime->get_arquivo_classe()->super_class);
-                class_runtime = methodArea.carregar_classe(superClassName);
+                string nome_super_classe = formatar_constante(classe_runtime->get_arquivo_classe()->constant_pool,
+                    classe_runtime->get_arquivo_classe()->super_class);
+                classe_runtime = area_metodos.carregar_classe(nome_super_classe);
             }
         } else {
             break;
         }
     }
-    if (class_runtime == NULL) {
+    if (classe_runtime == NULL) {
         cerr << "NoSuchFieldError" << endl;
         exit(1);
     }
 
-    if (stack_frame.frame_topo() != top_frame)
+    if (pilha_execucao.frame_topo() != frame_corrente)
         return;
-    Valor topValue = top_frame->pop_operand_stack();
-    if (topValue.tipo == DOUBLE || topValue.tipo == LONG) {
-        top_frame->pop_operand_stack();
+    Valor valor_topo = frame_corrente->pop_operand_stack();
+    if (valor_topo.tipo == DOUBLE || valor_topo.tipo == LONG) {
+        frame_corrente->pop_operand_stack();
     } else {
-        switch (fieldDescriptor[0]) {
+        switch (descritor_campo[0]) {
         case 'B':
-            topValue.tipo = BYTE;
-            topValue.tipo_print = BYTE;
+            valor_topo.tipo = BYTE;
+            valor_topo.tipo_print = BYTE;
             break;
         case 'C':
-            topValue.tipo = CHAR;
-            topValue.tipo = CHAR;
+            valor_topo.tipo = CHAR;
+            valor_topo.tipo = CHAR;
             break;
         case 'S':
-            topValue.tipo = SHORT;
-            topValue.tipo = SHORT;
+            valor_topo.tipo = SHORT;
+            valor_topo.tipo = SHORT;
             break;
         case 'Z':
-            topValue.tipo = BOOLEANO;
-            topValue.tipo = BOOLEANO;
+            valor_topo.tipo = BOOLEANO;
+            valor_topo.tipo = BOOLEANO;
             break;
         }
     }
-    class_runtime->insert_value(topValue, fieldName);
-    top_frame->pc += 3;
+    classe_runtime->insert_value(valor_topo, nome_campo);
+    frame_corrente->pc += 3;
 }
 
 void Executor::getfield()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t fieldIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo fieldCP = constant_pool[fieldIndex - 1];
-    assert(fieldCP.tag == ConstFieldRef);
-    ConstFieldRefInfo fieldRef = fieldCP.info.field_ref_info;
-    string className = formatar_constante(constant_pool, fieldRef.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[fieldRef.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo fieldNameAndType = nameAndTypeCP.info.name_type_info;
-    string fieldName = formatar_constante(constant_pool, fieldNameAndType.name_index);
-    string fieldDescriptor = formatar_constante(constant_pool, fieldNameAndType.descriptor_index);
-    Valor objectValue = top_frame->pop_operand_stack();
-    assert(objectValue.tipo == REFERENCIA);
-    Objeto* object = objectValue.dados.objeto;
-    assert(object->tipo_objeto() == INSTANCIA_CLASSE);
-    ClasseInstancia* classInstance = (ClasseInstancia*)object;
-    if (!classInstance->field_exists(fieldName)) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_campo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_campo = constant_pool[indice_campo - 1];
+    assert(cp_campo.tag == ConstFieldRef);
+    ConstFieldRefInfo ref_campo = cp_campo.info.field_ref_info;
+    string nome_classe = formatar_constante(constant_pool, ref_campo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[ref_campo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_campo = cp_nome_tipo.info.name_type_info;
+    string nome_campo = formatar_constante(constant_pool, nome_tipo_campo.name_index);
+    string descritor_campo = formatar_constante(constant_pool, nome_tipo_campo.descriptor_index);
+    Valor valor_objeto = frame_corrente->pop_operand_stack();
+    assert(valor_objeto.tipo == REFERENCIA);
+    Objeto* objeto = valor_objeto.dados.objeto;
+    assert(objeto->tipo_objeto() == INSTANCIA_CLASSE);
+    ClasseInstancia* instancia_classe = (ClasseInstancia*)objeto;
+    if (!instancia_classe->field_exists(nome_campo)) {
         cerr << "NoSuchFieldError" << endl;
         exit(1);
     }
-    Valor fieldValue = classInstance->get_value_from_field(fieldName);
-    switch (fieldValue.tipo) {
+    Valor valor_campo = instancia_classe->get_value_from_field(nome_campo);
+    switch (valor_campo.tipo) {
     case BOOLEANO:
-        fieldValue.tipo = INT;
-        fieldValue.tipo_print = BOOLEANO;
+        valor_campo.tipo = INT;
+        valor_campo.tipo_print = BOOLEANO;
         break;
     case BYTE:
-        fieldValue.tipo = INT;
-        fieldValue.tipo_print = BYTE;
+        valor_campo.tipo = INT;
+        valor_campo.tipo_print = BYTE;
         break;
     case SHORT:
-        fieldValue.tipo = INT;
-        fieldValue.tipo_print = SHORT;
+        valor_campo.tipo = INT;
+        valor_campo.tipo_print = SHORT;
         break;
     case INT:
-        fieldValue.tipo = INT;
-        fieldValue.tipo_print = INT;
+        valor_campo.tipo = INT;
+        valor_campo.tipo_print = INT;
         break;
     default:
         break;
     }
-    if (fieldValue.tipo == DOUBLE || fieldValue.tipo == LONG) {
-        Valor paddingValue = faz_valor_padding();
-        top_frame->push_operand_stack(paddingValue);
+    if (valor_campo.tipo == DOUBLE || valor_campo.tipo == LONG) {
+        Valor valor_padding = faz_valor_padding();
+        frame_corrente->push_operand_stack(valor_padding);
     }
-    top_frame->push_operand_stack(fieldValue);
-    top_frame->pc += 3;
+    frame_corrente->push_operand_stack(valor_campo);
+    frame_corrente->pc += 3;
 }
 
 void Executor::putfield()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t fieldIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo fieldCP = constant_pool[fieldIndex - 1];
-    assert(fieldCP.tag == ConstFieldRef);
-    ConstFieldRefInfo fieldRef = fieldCP.info.field_ref_info;
-    string className = formatar_constante(constant_pool, fieldRef.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[fieldRef.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo fieldNameAndType = nameAndTypeCP.info.name_type_info;
-    string fieldName = formatar_constante(constant_pool, fieldNameAndType.name_index);
-    string fieldDescriptor = formatar_constante(constant_pool, fieldNameAndType.descriptor_index);
-    Valor valueToBeInserted = top_frame->pop_operand_stack();
-    if (valueToBeInserted.tipo == DOUBLE || valueToBeInserted.tipo == LONG) {
-        top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_campo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_campo = constant_pool[indice_campo - 1];
+    assert(cp_campo.tag == ConstFieldRef);
+    ConstFieldRefInfo ref_campo = cp_campo.info.field_ref_info;
+    string nome_classe = formatar_constante(constant_pool, ref_campo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[ref_campo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_campo = cp_nome_tipo.info.name_type_info;
+    string nome_campo = formatar_constante(constant_pool, nome_tipo_campo.name_index);
+    string descritor_campo = formatar_constante(constant_pool, nome_tipo_campo.descriptor_index);
+    Valor valor_a_inserir = frame_corrente->pop_operand_stack();
+    if (valor_a_inserir.tipo == DOUBLE || valor_a_inserir.tipo == LONG) {
+        frame_corrente->pop_operand_stack();
     } else {
-        switch (fieldDescriptor[0]) {
+        switch (descritor_campo[0]) {
         case 'B':
-            valueToBeInserted.tipo = BYTE;
-            valueToBeInserted.tipo_print = BYTE;
+            valor_a_inserir.tipo = BYTE;
+            valor_a_inserir.tipo_print = BYTE;
             break;
         case 'C':
-            valueToBeInserted.tipo = CHAR;
-            valueToBeInserted.tipo_print = CHAR;
+            valor_a_inserir.tipo = CHAR;
+            valor_a_inserir.tipo_print = CHAR;
             break;
         case 'S':
-            valueToBeInserted.tipo = SHORT;
-            valueToBeInserted.tipo_print = SHORT;
+            valor_a_inserir.tipo = SHORT;
+            valor_a_inserir.tipo_print = SHORT;
             break;
         case 'Z':
-            valueToBeInserted.tipo = BOOLEANO;
-            valueToBeInserted.tipo_print = BOOLEANO;
+            valor_a_inserir.tipo = BOOLEANO;
+            valor_a_inserir.tipo_print = BOOLEANO;
             break;
         }
     }
-    Valor objectValue = top_frame->pop_operand_stack();
-    assert(objectValue.tipo == REFERENCIA);
-    Objeto* object = objectValue.dados.objeto;
-    assert(object->tipo_objeto() == INSTANCIA_CLASSE);
-    ClasseInstancia* classInstance = (ClasseInstancia*)object;
-    classInstance->insert_value_into_field(valueToBeInserted, fieldName);
-    top_frame->pc += 3;
+    Valor valor_objeto = frame_corrente->pop_operand_stack();
+    assert(valor_objeto.tipo == REFERENCIA);
+    Objeto* objeto = valor_objeto.dados.objeto;
+    assert(objeto->tipo_objeto() == INSTANCIA_CLASSE);
+    ClasseInstancia* instancia_classe = (ClasseInstancia*)objeto;
+    instancia_classe->insert_value_into_field(valor_a_inserir, nome_campo);
+    frame_corrente->pc += 3;
 }
 
 void Executor::invokevirtual()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    stack<Valor> operandStackBackup = top_frame->copy_operand_stack();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t methodIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo methodCP = constant_pool[methodIndex - 1];
-    assert(methodCP.tag == ConstMethodRef);
-    ConstMethodRefInfo methodInfo = methodCP.info.method_ref_info;
-    string className = formatar_constante(constant_pool, methodInfo.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[methodInfo.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo methodNameAndType = nameAndTypeCP.info.name_type_info;
-    string method_name = formatar_constante(constant_pool, methodNameAndType.name_index);
-    string methodDescriptor = formatar_constante(constant_pool, methodNameAndType.descriptor_index);
-    if (className.find("java/") != string::npos) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    stack<Valor> backup_pilha_operandos = frame_corrente->copy_operand_stack();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_metodo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_metodo = constant_pool[indice_metodo - 1];
+    assert(cp_metodo.tag == ConstMethodRef);
+    ConstMethodRefInfo info_metodo = cp_metodo.info.method_ref_info;
+    string nome_classe = formatar_constante(constant_pool, info_metodo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[info_metodo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_metodo = cp_nome_tipo.info.name_type_info;
+    string nome_metodo = formatar_constante(constant_pool, nome_tipo_metodo.name_index);
+    string descritor_metodo = formatar_constante(constant_pool, nome_tipo_metodo.descriptor_index);
+    if (nome_classe.find("java/") != string::npos) {
 
-        if (className == "java/io/PrintStream" && (method_name == "print" || method_name == "println")) {
-            if (methodDescriptor != "()V") {
-                Valor printValue = top_frame->pop_operand_stack();
-                if (printValue.tipo == INT) {
-                    switch (printValue.tipo_print) {
+        if (nome_classe == "java/io/PrintStream" && (nome_metodo == "print" || nome_metodo == "println")) {
+            if (descritor_metodo != "()V") {
+                Valor valor_print = frame_corrente->pop_operand_stack();
+                if (valor_print.tipo == INT) {
+                    switch (valor_print.tipo_print) {
                     case BOOLEANO:
-                        cout << (printValue.dados.valor_booleano == 0 ? "false" : "true");
+                        cout << (valor_print.dados.valor_booleano == 0 ? "false" : "true");
                         break;
                     case BYTE:
-                        cout << (int)printValue.dados.valor_byte;
+                        cout << (int)valor_print.dados.valor_byte;
                         break;
                     case CHAR:
-                        cout << printValue.dados.valor_char;
+                        cout << valor_print.dados.valor_char;
                         break;
                     case SHORT:
-                        cout << printValue.dados.valor_short;
+                        cout << valor_print.dados.valor_short;
                         break;
                     default:
-                        cout << printValue.dados.valor_int;
+                        cout << valor_print.dados.valor_int;
                         break;
                     }
                 } else {
-                    switch (printValue.tipo) {
+                    switch (valor_print.tipo) {
                     case DOUBLE:
-                        top_frame->pop_operand_stack();
-                        cout << printValue.dados.valor_double;
+                        frame_corrente->pop_operand_stack();
+                        cout << valor_print.dados.valor_double;
                         break;
                     case FLOAT:
-                        cout << printValue.dados.valor_float;
+                        cout << valor_print.dados.valor_float;
                         break;
                     case LONG:
-                        top_frame->pop_operand_stack();
-                        cout << printValue.dados.valor_long;
+                        frame_corrente->pop_operand_stack();
+                        cout << valor_print.dados.valor_long;
                         break;
                     case REFERENCIA:
-                        assert(printValue.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
-                        cout << ((ObjetoString*)printValue.dados.objeto)->get_str().c_str();
+                        assert(valor_print.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
+                        cout << ((ObjetoString*)valor_print.dados.objeto)->get_str().c_str();
                         break;
                     case BOOLEANO:
-                        cout << (printValue.dados.valor_booleano == 0 ? "false" : "true");
+                        cout << (valor_print.dados.valor_booleano == 0 ? "false" : "true");
                         break;
                     case BYTE:
-                        cout << (int)printValue.dados.valor_byte;
+                        cout << (int)valor_print.dados.valor_byte;
                         break;
                     case CHAR:
-                        cout << printValue.dados.valor_char;
+                        cout << valor_print.dados.valor_char;
                         break;
                     case SHORT:
-                        cout << printValue.dados.valor_short;
+                        cout << valor_print.dados.valor_short;
                         break;
                     default:
-                        cerr << "Invalid print type:" << printValue.tipo << endl;
+                        cerr << "Invalid print type:" << valor_print.tipo << endl;
                         exit(1);
                         break;
                     }
                 }
             }
-            if (method_name == "println")
+            if (nome_metodo == "println")
                 cout << "\n";
-        } else if (className == "java/lang/String" && method_name == "equals") {
-            Valor strValue1 = top_frame->pop_operand_stack();
-            Valor strValue2 = top_frame->pop_operand_stack();
-            assert(strValue1.tipo == REFERENCIA);
-            assert(strValue2.tipo == REFERENCIA);
-            assert(strValue1.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
-            assert(strValue2.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
-            ObjetoString* str1 = (ObjetoString*)strValue1.dados.objeto;
-            ObjetoString* str2 = (ObjetoString*)strValue2.dados.objeto;
-            Valor result = faz_valor_int(0);
+        } else if (nome_classe == "java/lang/String" && nome_metodo == "equals") {
+            Valor valor_str1 = frame_corrente->pop_operand_stack();
+            Valor valor_str2 = frame_corrente->pop_operand_stack();
+            assert(valor_str1.tipo == REFERENCIA);
+            assert(valor_str2.tipo == REFERENCIA);
+            assert(valor_str1.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
+            assert(valor_str2.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
+            ObjetoString* str1 = (ObjetoString*)valor_str1.dados.objeto;
+            ObjetoString* str2 = (ObjetoString*)valor_str2.dados.objeto;
+            Valor resultado = faz_valor_int(0);
             if (str1->get_str() == str2->get_str()) {
-                result.dados.valor_int = 1;
+                resultado.dados.valor_int = 1;
             } else {
-                result.dados.valor_int = 0;
+                resultado.dados.valor_int = 0;
             }
-            top_frame->push_operand_stack(result);
-        } else if (className == "java/lang/String" && method_name == "length") {
-            Valor strValue = top_frame->pop_operand_stack();
-            assert(strValue.tipo == REFERENCIA);
-            assert(strValue.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
-            ObjetoString* str = (ObjetoString*)strValue.dados.objeto;
-            Valor result = faz_valor_int((int32_t)(str->get_str()).size());
-            top_frame->push_operand_stack(result);
+            frame_corrente->push_operand_stack(resultado);
+        } else if (nome_classe == "java/lang/String" && nome_metodo == "length") {
+            Valor valor_str = frame_corrente->pop_operand_stack();
+            assert(valor_str.tipo == REFERENCIA);
+            assert(valor_str.dados.objeto->tipo_objeto() == INSTANCIA_STRING);
+            ObjetoString* str = (ObjetoString*)valor_str.dados.objeto;
+            Valor resultado = faz_valor_int((int32_t)(str->get_str()).size());
+            frame_corrente->push_operand_stack(resultado);
         } else {
-            cerr << "Call to invalid instance method: " << method_name << endl;
+            cerr << "Call to invalid instance method: " << nome_metodo << endl;
             exit(1);
         }
     } else {
         uint16_t nargs = 0;
         uint16_t i = 1;
-        while (methodDescriptor[i] != ')') {
-            char baseType = methodDescriptor[i];
-            if (baseType == 'D' || baseType == 'J') {
+        while (descritor_metodo[i] != ')') {
+            char tipo_base = descritor_metodo[i];
+            if (tipo_base == 'D' || tipo_base == 'J') {
                 nargs += 2;
-            } else if (baseType == 'L') {
+            } else if (tipo_base == 'L') {
                 nargs++;
-                while (methodDescriptor[++i] != ';')
+                while (descritor_metodo[++i] != ';')
                     ;
-            } else if (baseType == '[') {
+            } else if (tipo_base == '[') {
                 nargs++;
-                while (methodDescriptor[++i] == '[')
+                while (descritor_metodo[++i] == '[')
                     ;
-                if (methodDescriptor[i] == 'L')
-                    while (methodDescriptor[++i] != ';')
+                if (descritor_metodo[i] == 'L')
+                    while (descritor_metodo[++i] != ';')
                         ;
             } else {
                 nargs++;
@@ -3337,81 +3337,81 @@ void Executor::invokevirtual()
         }
         vector<Valor> args;
         for (int i = 0; i < nargs; i++) {
-            Valor value = top_frame->pop_operand_stack();
-            if (value.tipo == PADDING) {
-                args.insert(args.begin() + 1, value);
+            Valor valor = frame_corrente->pop_operand_stack();
+            if (valor.tipo == PADDING) {
+                args.insert(args.begin() + 1, valor);
             } else {
-                args.insert(args.begin(), value);
+                args.insert(args.begin(), valor);
             }
         }
-        Valor objectValue = top_frame->pop_operand_stack();
-        assert(objectValue.tipo == REFERENCIA);
-        args.insert(args.begin(), objectValue);
-        Objeto* object = objectValue.dados.objeto;
-        assert(object->tipo_objeto() == INSTANCIA_CLASSE);
-        ClasseInstancia* instance = (ClasseInstancia*)object;
-        AreaMetodos& methodArea = AreaMetodos::instancia();
-        ClasseEstatica* class_runtime = methodArea.carregar_classe(className);
-        Frame* newFrame = new Frame(instance, class_runtime, method_name, methodDescriptor, args);
+        Valor valor_objeto = frame_corrente->pop_operand_stack();
+        assert(valor_objeto.tipo == REFERENCIA);
+        args.insert(args.begin(), valor_objeto);
+        Objeto* objeto = valor_objeto.dados.objeto;
+        assert(objeto->tipo_objeto() == INSTANCIA_CLASSE);
+        ClasseInstancia* instance = (ClasseInstancia*)objeto;
+        AreaMetodos& area_metodos = AreaMetodos::instancia();
+        ClasseEstatica* classe_runtime = area_metodos.carregar_classe(nome_classe);
+        Frame* novo_frame = new Frame(instance, classe_runtime, nome_metodo, descritor_metodo, args);
 
-        if (stack_frame.frame_topo() != top_frame) {
-            top_frame->load_operand_stack(operandStackBackup);
-            delete newFrame;
+        if (pilha_execucao.frame_topo() != frame_corrente) {
+            frame_corrente->load_operand_stack(backup_pilha_operandos);
+            delete novo_frame;
             return;
         }
-        stack_frame.empilhar_frame(newFrame);
+        pilha_execucao.empilhar_frame(novo_frame);
     }
-    top_frame->pc += 3;
+    frame_corrente->pc += 3;
 }
 
 void Executor::invokespecial()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    stack<Valor> operandStackBackup = top_frame->copy_operand_stack();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t methodIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo methodCP = constant_pool[methodIndex - 1];
-    assert(methodCP.tag == ConstMethodRef);
-    ConstMethodRefInfo methodInfo = methodCP.info.method_ref_info;
-    string className = formatar_constante(constant_pool, methodInfo.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[methodInfo.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo methodNameAndType = nameAndTypeCP.info.name_type_info;
-    string method_name = formatar_constante(constant_pool, methodNameAndType.name_index);
-    string methodDescriptor = formatar_constante(constant_pool, methodNameAndType.descriptor_index);
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    stack<Valor> backup_pilha_operandos = frame_corrente->copy_operand_stack();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_metodo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_metodo = constant_pool[indice_metodo - 1];
+    assert(cp_metodo.tag == ConstMethodRef);
+    ConstMethodRefInfo info_metodo = cp_metodo.info.method_ref_info;
+    string nome_classe = formatar_constante(constant_pool, info_metodo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[info_metodo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_metodo = cp_nome_tipo.info.name_type_info;
+    string nome_metodo = formatar_constante(constant_pool, nome_tipo_metodo.name_index);
+    string descritor_metodo = formatar_constante(constant_pool, nome_tipo_metodo.descriptor_index);
 
-    if ((className == "java/lang/Object" || className == "java/lang/String") && method_name == "<init>") {
-        if (className == "java/lang/String") {
-            top_frame->pop_operand_stack();
+    if ((nome_classe == "java/lang/Object" || nome_classe == "java/lang/String") && nome_metodo == "<init>") {
+        if (nome_classe == "java/lang/String") {
+            frame_corrente->pop_operand_stack();
         }
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
         return;
     }
 
-    if (className.find("java/") != string::npos) {
-        cerr << "Call to invalid special method: " << method_name << endl;
+    if (nome_classe.find("java/") != string::npos) {
+        cerr << "Call to invalid special method: " << nome_metodo << endl;
         exit(1);
     } else {
         uint16_t nargs = 0;
         uint16_t i = 1;
-        while (methodDescriptor[i] != ')') {
-            char baseType = methodDescriptor[i];
-            if (baseType == 'D' || baseType == 'J') {
+        while (descritor_metodo[i] != ')') {
+            char tipo_base = descritor_metodo[i];
+            if (tipo_base == 'D' || tipo_base == 'J') {
                 nargs += 2;
-            } else if (baseType == 'L') {
+            } else if (tipo_base == 'L') {
                 nargs++;
-                while (methodDescriptor[++i] != ';')
+                while (descritor_metodo[++i] != ';')
                     ;
-            } else if (baseType == '[') {
+            } else if (tipo_base == '[') {
                 nargs++;
-                while (methodDescriptor[++i] == '[')
+                while (descritor_metodo[++i] == '[')
                     ;
-                if (methodDescriptor[i] == 'L')
-                    while (methodDescriptor[++i] != ';')
+                if (descritor_metodo[i] == 'L')
+                    while (descritor_metodo[++i] != ';')
                         ;
             } else {
                 nargs++;
@@ -3420,76 +3420,76 @@ void Executor::invokespecial()
         }
         vector<Valor> args;
         for (int i = 0; i < nargs; i++) {
-            Valor value = top_frame->pop_operand_stack();
-            if (value.tipo == PADDING) {
-                args.insert(args.begin() + 1, value);
+            Valor valor = frame_corrente->pop_operand_stack();
+            if (valor.tipo == PADDING) {
+                args.insert(args.begin() + 1, valor);
             } else {
-                args.insert(args.begin(), value);
+                args.insert(args.begin(), valor);
             }
         }
-        Valor objectValue = top_frame->pop_operand_stack();
-        assert(objectValue.tipo == REFERENCIA);
-        args.insert(args.begin(), objectValue);
-        Objeto* object = objectValue.dados.objeto;
-        assert(object->tipo_objeto() == INSTANCIA_CLASSE);
-        ClasseInstancia* instance = (ClasseInstancia*)object;
-        AreaMetodos& methodArea = AreaMetodos::instancia();
-        ClasseEstatica* class_runtime = methodArea.carregar_classe(className);
-        Frame* newFrame = new Frame(instance, class_runtime, method_name, methodDescriptor, args);
+        Valor valor_objeto = frame_corrente->pop_operand_stack();
+        assert(valor_objeto.tipo == REFERENCIA);
+        args.insert(args.begin(), valor_objeto);
+        Objeto* objeto = valor_objeto.dados.objeto;
+        assert(objeto->tipo_objeto() == INSTANCIA_CLASSE);
+        ClasseInstancia* instance = (ClasseInstancia*)objeto;
+        AreaMetodos& area_metodos = AreaMetodos::instancia();
+        ClasseEstatica* classe_runtime = area_metodos.carregar_classe(nome_classe);
+        Frame* novo_frame = new Frame(instance, classe_runtime, nome_metodo, descritor_metodo, args);
 
-        if (stack_frame.frame_topo() != top_frame) {
-            top_frame->load_operand_stack(operandStackBackup);
-            delete newFrame;
+        if (pilha_execucao.frame_topo() != frame_corrente) {
+            frame_corrente->load_operand_stack(backup_pilha_operandos);
+            delete novo_frame;
             return;
         }
-        stack_frame.empilhar_frame(newFrame);
+        pilha_execucao.empilhar_frame(novo_frame);
     }
-    top_frame->pc += 3;
+    frame_corrente->pc += 3;
 }
 
 void Executor::invokestatic()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    stack<Valor> operandStackBackup = top_frame->copy_operand_stack();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t methodIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo methodCP = constant_pool[methodIndex - 1];
-    assert(methodCP.tag == ConstMethodRef);
-    ConstMethodRefInfo methodInfo = methodCP.info.method_ref_info;
-    string className = formatar_constante(constant_pool, methodInfo.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[methodInfo.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo methodNameAndType = nameAndTypeCP.info.name_type_info;
-    string method_name = formatar_constante(constant_pool, methodNameAndType.name_index);
-    string methodDescriptor = formatar_constante(constant_pool, methodNameAndType.descriptor_index);
-    if (className == "java/lang/Object" && method_name == "registerNatives") {
-        top_frame->pc += 3;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    stack<Valor> backup_pilha_operandos = frame_corrente->copy_operand_stack();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_metodo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_metodo = constant_pool[indice_metodo - 1];
+    assert(cp_metodo.tag == ConstMethodRef);
+    ConstMethodRefInfo info_metodo = cp_metodo.info.method_ref_info;
+    string nome_classe = formatar_constante(constant_pool, info_metodo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[info_metodo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_metodo = cp_nome_tipo.info.name_type_info;
+    string nome_metodo = formatar_constante(constant_pool, nome_tipo_metodo.name_index);
+    string descritor_metodo = formatar_constante(constant_pool, nome_tipo_metodo.descriptor_index);
+    if (nome_classe == "java/lang/Object" && nome_metodo == "registerNatives") {
+        frame_corrente->pc += 3;
         return;
     }
-    if (className.find("java/") != string::npos) {
-        cerr << "Call to invalid static method: " << method_name << endl;
+    if (nome_classe.find("java/") != string::npos) {
+        cerr << "Call to invalid static method: " << nome_metodo << endl;
         exit(1);
     } else {
         uint16_t nargs = 0;
         uint16_t i = 1;
-        while (methodDescriptor[i] != ')') {
-            char baseType = methodDescriptor[i];
-            if (baseType == 'D' || baseType == 'J') {
+        while (descritor_metodo[i] != ')') {
+            char tipo_base = descritor_metodo[i];
+            if (tipo_base == 'D' || tipo_base == 'J') {
                 nargs += 2;
-            } else if (baseType == 'L') {
+            } else if (tipo_base == 'L') {
                 nargs++;
-                while (methodDescriptor[++i] != ';')
+                while (descritor_metodo[++i] != ';')
                     ;
-            } else if (baseType == '[') {
+            } else if (tipo_base == '[') {
                 nargs++;
-                while (methodDescriptor[++i] == '[')
+                while (descritor_metodo[++i] == '[')
                     ;
-                if (methodDescriptor[i] == 'L')
-                    while (methodDescriptor[++i] != ';')
+                if (descritor_metodo[i] == 'L')
+                    while (descritor_metodo[++i] != ';')
                         ;
             } else {
                 nargs++;
@@ -3498,66 +3498,66 @@ void Executor::invokestatic()
         }
         vector<Valor> args;
         for (int i = 0; i < nargs; i++) {
-            Valor value = top_frame->pop_operand_stack();
-            if (value.tipo == PADDING) {
-                args.insert(args.begin() + 1, value);
+            Valor valor = frame_corrente->pop_operand_stack();
+            if (valor.tipo == PADDING) {
+                args.insert(args.begin() + 1, valor);
             } else {
-                args.insert(args.begin(), value);
+                args.insert(args.begin(), valor);
             }
         }
-        AreaMetodos& methodArea = AreaMetodos::instancia();
-        ClasseEstatica* class_runtime = methodArea.carregar_classe(className);
-        Frame* newFrame = new Frame(class_runtime, method_name, methodDescriptor, args);
+        AreaMetodos& area_metodos = AreaMetodos::instancia();
+        ClasseEstatica* classe_runtime = area_metodos.carregar_classe(nome_classe);
+        Frame* novo_frame = new Frame(classe_runtime, nome_metodo, descritor_metodo, args);
 
-        if (stack_frame.frame_topo() != top_frame) {
-            top_frame->load_operand_stack(operandStackBackup);
-            delete newFrame;
+        if (pilha_execucao.frame_topo() != frame_corrente) {
+            frame_corrente->load_operand_stack(backup_pilha_operandos);
+            delete novo_frame;
             return;
         }
-        stack_frame.empilhar_frame(newFrame);
+        pilha_execucao.empilhar_frame(novo_frame);
     }
-    top_frame->pc += 3;
+    frame_corrente->pc += 3;
 }
 
 void Executor::invokeinterface()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    stack<Valor> operandStackBackup = top_frame->copy_operand_stack();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t methodIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo methodCP = constant_pool[methodIndex - 1];
-    assert(methodCP.tag == ConstMethodRef || methodCP.tag == ConstInterfaceMethodRef);
-    ConstMethodRefInfo methodInfo = methodCP.info.method_ref_info;
-    string className = formatar_constante(constant_pool, methodInfo.class_index);
-    ConstantPoolInfo nameAndTypeCP = constant_pool[methodInfo.name_and_type_index - 1];
-    assert(nameAndTypeCP.tag == ConstNameType);
-    ConstNameTypeInfo methodNameAndType = nameAndTypeCP.info.name_type_info;
-    string method_name = formatar_constante(constant_pool, methodNameAndType.name_index);
-    string methodDescriptor = formatar_constante(constant_pool, methodNameAndType.descriptor_index);
-    if (className.find("java/") != string::npos) {
-        cerr << "Call to invalid interface method: " << method_name << endl;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    stack<Valor> backup_pilha_operandos = frame_corrente->copy_operand_stack();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_metodo = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_metodo = constant_pool[indice_metodo - 1];
+    assert(cp_metodo.tag == ConstMethodRef || cp_metodo.tag == ConstInterfaceMethodRef);
+    ConstMethodRefInfo info_metodo = cp_metodo.info.method_ref_info;
+    string nome_classe = formatar_constante(constant_pool, info_metodo.class_index);
+    ConstantPoolInfo cp_nome_tipo = constant_pool[info_metodo.name_and_type_index - 1];
+    assert(cp_nome_tipo.tag == ConstNameType);
+    ConstNameTypeInfo nome_tipo_metodo = cp_nome_tipo.info.name_type_info;
+    string nome_metodo = formatar_constante(constant_pool, nome_tipo_metodo.name_index);
+    string descritor_metodo = formatar_constante(constant_pool, nome_tipo_metodo.descriptor_index);
+    if (nome_classe.find("java/") != string::npos) {
+        cerr << "Call to invalid interface method: " << nome_metodo << endl;
         exit(1);
     } else {
         uint16_t nargs = 0;
         uint16_t i = 1;
-        while (methodDescriptor[i] != ')') {
-            char baseType = methodDescriptor[i];
-            if (baseType == 'D' || baseType == 'J') {
+        while (descritor_metodo[i] != ')') {
+            char tipo_base = descritor_metodo[i];
+            if (tipo_base == 'D' || tipo_base == 'J') {
                 nargs += 2;
-            } else if (baseType == 'L') {
+            } else if (tipo_base == 'L') {
                 nargs++;
-                while (methodDescriptor[++i] != ';')
+                while (descritor_metodo[++i] != ';')
                     ;
-            } else if (baseType == '[') {
+            } else if (tipo_base == '[') {
                 nargs++;
-                while (methodDescriptor[++i] == '[')
+                while (descritor_metodo[++i] == '[')
                     ;
-                if (methodDescriptor[i] == 'L')
-                    while (methodDescriptor[++i] != ';')
+                if (descritor_metodo[i] == 'L')
+                    while (descritor_metodo[++i] != ';')
                         ;
             } else {
                 nargs++;
@@ -3566,458 +3566,458 @@ void Executor::invokeinterface()
         }
         vector<Valor> args;
         for (int i = 0; i < nargs; i++) {
-            Valor value = top_frame->pop_operand_stack();
-            if (value.tipo == PADDING) {
-                args.insert(args.begin() + 1, value);
+            Valor valor = frame_corrente->pop_operand_stack();
+            if (valor.tipo == PADDING) {
+                args.insert(args.begin() + 1, valor);
             } else {
-                args.insert(args.begin(), value);
+                args.insert(args.begin(), valor);
             }
         }
-        Valor objectValue = top_frame->pop_operand_stack();
-        assert(objectValue.tipo == REFERENCIA);
-        args.insert(args.begin(), objectValue);
-        Objeto* object = objectValue.dados.objeto;
-        assert(object->tipo_objeto() == INSTANCIA_CLASSE);
-        ClasseInstancia* instance = (ClasseInstancia*)object;
-        AreaMetodos& methodArea = AreaMetodos::instancia();
-        methodArea.carregar_classe(className);
-        Frame* newFrame = new Frame(instance, instance->get_classe_runtime(), method_name, methodDescriptor, args);
+        Valor valor_objeto = frame_corrente->pop_operand_stack();
+        assert(valor_objeto.tipo == REFERENCIA);
+        args.insert(args.begin(), valor_objeto);
+        Objeto* objeto = valor_objeto.dados.objeto;
+        assert(objeto->tipo_objeto() == INSTANCIA_CLASSE);
+        ClasseInstancia* instance = (ClasseInstancia*)objeto;
+        AreaMetodos& area_metodos = AreaMetodos::instancia();
+        area_metodos.carregar_classe(nome_classe);
+        Frame* novo_frame = new Frame(instance, instance->get_classe_runtime(), nome_metodo, descritor_metodo, args);
 
-        if (stack_frame.frame_topo() != top_frame) {
-            top_frame->load_operand_stack(operandStackBackup);
-            delete newFrame;
+        if (pilha_execucao.frame_topo() != frame_corrente) {
+            frame_corrente->load_operand_stack(backup_pilha_operandos);
+            delete novo_frame;
             return;
         }
-        stack_frame.empilhar_frame(newFrame);
+        pilha_execucao.empilhar_frame(novo_frame);
     }
-    top_frame->pc += 5;
+    frame_corrente->pc += 5;
 }
 
 void Executor::func_new()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t classIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo classCP = constant_pool[classIndex - 1];
-    assert(classCP.tag == ConstClass);
-    ConstClassInfo classInfo = classCP.info.class_info;
-    string className = formatar_constante(constant_pool, classInfo.name_index);
-    Objeto* object;
-    if (className == "java/lang/String") {
-        object = new ObjetoString();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_classe = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_classe = constant_pool[indice_classe - 1];
+    assert(cp_classe.tag == ConstClass);
+    ConstClassInfo info_classe = cp_classe.info.class_info;
+    string nome_classe = formatar_constante(constant_pool, info_classe.name_index);
+    Objeto* objeto;
+    if (nome_classe == "java/lang/String") {
+        objeto = new ObjetoString();
     } else {
-        AreaMetodos& methodArea = AreaMetodos::instancia();
-        ClasseEstatica* class_runtime = methodArea.carregar_classe(className);
-        object = new ClasseInstancia(class_runtime);
+        AreaMetodos& area_metodos = AreaMetodos::instancia();
+        ClasseEstatica* classe_runtime = area_metodos.carregar_classe(nome_classe);
+        objeto = new ClasseInstancia(classe_runtime);
     }
 
-    Valor objectref = faz_valor_referencia(object);
-    top_frame->push_operand_stack(objectref);
-    top_frame->pc += 3;
+    Valor objectref = faz_valor_referencia(objeto);
+    frame_corrente->push_operand_stack(objectref);
+    frame_corrente->pc += 3;
 }
 
 void Executor::newarray()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor count = top_frame->pop_operand_stack();
-    assert(count.tipo == INT);
-    if (count.dados.valor_int < 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor contagem = frame_corrente->pop_operand_stack();
+    assert(contagem.tipo == INT);
+    if (contagem.dados.valor_int < 0) {
         cerr << "NegativeArranjoSizeException" << endl;
         exit(1);
     }
-    Arranjo* array = nullptr;
-    Valor value;
-    value.dados.valor_long = 0;
-    u1* code = top_frame->get_code(top_frame->pc);
-    switch (code[1]) {
+    Arranjo* arranjo = nullptr;
+    Valor valor;
+    valor.dados.valor_long = 0;
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    switch (codigo[1]) {
     case 4:
-        array = new Arranjo(BOOLEANO);
-        value = faz_valor_booleano(false);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(BOOLEANO);
+        valor = faz_valor_booleano(false);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     case 5:
-        array = new Arranjo(CHAR);
-        value = faz_valor_char(0);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(CHAR);
+        valor = faz_valor_char(0);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     case 6:
-        array = new Arranjo(FLOAT);
-        value = faz_valor_float(0);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(FLOAT);
+        valor = faz_valor_float(0);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     case 7:
-        array = new Arranjo(DOUBLE);
-        value = faz_valor_double(0);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(DOUBLE);
+        valor = faz_valor_double(0);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     case 8:
-        array = new Arranjo(BYTE);
-        value = faz_valor_byte(0);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(BYTE);
+        valor = faz_valor_byte(0);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     case 9:
-        array = new Arranjo(SHORT);
-        value = faz_valor_short(0);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(SHORT);
+        valor = faz_valor_short(0);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     case 10:
-        array = new Arranjo(INT);
-        value = faz_valor_int(0);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(INT);
+        valor = faz_valor_int(0);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     case 11:
-        array = new Arranjo(LONG);
-        value = faz_valor_long(0);
-        for (int i = 0; i < count.dados.valor_int; i++) {
-            array->push_value(value);
+        arranjo = new Arranjo(LONG);
+        valor = faz_valor_long(0);
+        for (int i = 0; i < contagem.dados.valor_int; i++) {
+            arranjo->push_value(valor);
         }
         break;
     }
-    Valor arrayref = faz_valor_referencia(array);
-    top_frame->push_operand_stack(arrayref);
-    top_frame->pc += 2;
+    Valor arrayref = faz_valor_referencia(arranjo);
+    frame_corrente->push_operand_stack(arrayref);
+    frame_corrente->pc += 2;
 }
 
 void Executor::anewarray()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor count = top_frame->pop_operand_stack();
-    assert(count.tipo == INT);
-    if (count.dados.valor_int < 0) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor contagem = frame_corrente->pop_operand_stack();
+    assert(contagem.tipo == INT);
+    if (contagem.dados.valor_int < 0) {
         cerr << "NegativeArranjoSizeException" << endl;
         exit(1);
     }
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    uint16_t classIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo classCP = constant_pool[classIndex - 1];
-    assert(classCP.tag == ConstClass);
-    ConstClassInfo classInfo = classCP.info.class_info;
-    string className = formatar_constante(constant_pool, classInfo.name_index);
-    if (className != "java/lang/String") {
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    uint16_t indice_classe = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_classe = constant_pool[indice_classe - 1];
+    assert(cp_classe.tag == ConstClass);
+    ConstClassInfo info_classe = cp_classe.info.class_info;
+    string nome_classe = formatar_constante(constant_pool, info_classe.name_index);
+    if (nome_classe != "java/lang/String") {
         int i = 0;
-        while (className[i] == '[')
+        while (nome_classe[i] == '[')
             i++;
-        if (className[i] == 'L') {
-            AreaMetodos& methodArea = AreaMetodos::instancia();
-            methodArea.carregar_classe(className.substr(i + 1, className.size() - i - 2));
+        if (nome_classe[i] == 'L') {
+            AreaMetodos& area_metodos = AreaMetodos::instancia();
+            area_metodos.carregar_classe(nome_classe.substr(i + 1, nome_classe.size() - i - 2));
         }
     }
 
     Valor objectref = faz_valor_referencia(new Arranjo(REFERENCIA));
 
-    Valor nullValue = faz_valor_referencia(NULL);
-    for (int i = 0; i < count.dados.valor_int; i++) {
-        ((Arranjo*)objectref.dados.objeto)->push_value(nullValue);
+    Valor valor_null = faz_valor_referencia(NULL);
+    for (int i = 0; i < contagem.dados.valor_int; i++) {
+        ((Arranjo*)objectref.dados.objeto)->push_value(valor_null);
     }
-    top_frame->push_operand_stack(objectref);
-    top_frame->pc += 3;
+    frame_corrente->push_operand_stack(objectref);
+    frame_corrente->pc += 3;
 }
 
 void Executor::arraylength()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor arrayref = top_frame->pop_operand_stack();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor arrayref = frame_corrente->pop_operand_stack();
     assert(arrayref.tipo == REFERENCIA);
     if (arrayref.dados.objeto == NULL) {
         cerr << "NullPointerException" << endl;
         exit(1);
     }
     Valor length = faz_valor_int((int)((Arranjo*)arrayref.dados.objeto)->get_size());
-    top_frame->push_operand_stack(length);
-    top_frame->pc++;
+    frame_corrente->push_operand_stack(length);
+    frame_corrente->pc++;
 }
 
 void Executor::athrow()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    frame_corrente->pc++;
 }
 
 void Executor::checkcast()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    AreaMetodos& methodArea = AreaMetodos::instancia();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    u2 cpIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    ConstantPoolInfo cpElement = constant_pool[cpIndex - 1];
-    assert(cpElement.tag == ConstClass);
-    string className = formatar_constante(constant_pool, cpIndex);
-    Valor objectrefValue = top_frame->pop_operand_stack();
-    assert(objectrefValue.tipo == REFERENCIA);
-    Valor resultValue = faz_valor_int(0);
-    if (objectrefValue.dados.objeto == NULL) {
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    AreaMetodos& area_metodos = AreaMetodos::instancia();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    u2 indice_cp = (byte1 << 8) | byte2;
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    ConstantPoolInfo elemento_cp = constant_pool[indice_cp - 1];
+    assert(elemento_cp.tag == ConstClass);
+    string nome_classe = formatar_constante(constant_pool, indice_cp);
+    Valor valor_objectref = frame_corrente->pop_operand_stack();
+    assert(valor_objectref.tipo == REFERENCIA);
+    Valor valor_resultado = faz_valor_int(0);
+    if (valor_objectref.dados.objeto == NULL) {
         cerr << "ClassCastException" << endl;
         exit(1);
     } else {
-        Objeto* obj = objectrefValue.dados.objeto;
+        Objeto* obj = valor_objectref.dados.objeto;
         if (obj->tipo_objeto() == INSTANCIA_CLASSE) {
-            ClasseInstancia* classInstance = (ClasseInstancia*)obj;
-            ClasseEstatica* class_runtime = classInstance->get_classe_runtime();
+            ClasseInstancia* instancia_classe = (ClasseInstancia*)obj;
+            ClasseEstatica* classe_runtime = instancia_classe->get_classe_runtime();
             bool found = false;
             while (!found) {
-                ArquivoClasse* class_file = class_runtime->get_arquivo_classe();
-                string currClassName = formatar_constante(class_file->constant_pool, class_file->this_class);
-                if (currClassName == className) {
+                ArquivoClasse* arquivo_classe = classe_runtime->get_arquivo_classe();
+                string nome_classe_atual = formatar_constante(arquivo_classe->constant_pool, arquivo_classe->this_class);
+                if (nome_classe_atual == nome_classe) {
                     found = true;
                 } else {
-                    if (class_file->super_class == 0) {
+                    if (arquivo_classe->super_class == 0) {
                         break;
                     } else {
-                        string superClassName = formatar_constante(class_file->constant_pool, class_file->this_class);
-                        class_runtime = methodArea.carregar_classe(superClassName);
+                        string nome_super_classe = formatar_constante(arquivo_classe->constant_pool, arquivo_classe->this_class);
+                        classe_runtime = area_metodos.carregar_classe(nome_super_classe);
                     }
                 }
             }
-            resultValue.dados.valor_int = found ? 1 : 0;
+            valor_resultado.dados.valor_int = found ? 1 : 0;
         } else if (obj->tipo_objeto() == INSTANCIA_STRING) {
-            resultValue.dados.valor_int = (className == "java/lang/String" || className == "java/lang/Object") ? 1 : 0;
+            valor_resultado.dados.valor_int = (nome_classe == "java/lang/String" || nome_classe == "java/lang/Object") ? 1 : 0;
         } else {
-            if (className == "java/lang/Object") {
-                resultValue.dados.valor_int = 1;
+            if (nome_classe == "java/lang/Object") {
+                valor_resultado.dados.valor_int = 1;
             } else {
-                resultValue.dados.valor_int = 0;
+                valor_resultado.dados.valor_int = 0;
             }
         }
     }
-    top_frame->push_operand_stack(resultValue);
-    top_frame->pc += 3;
+    frame_corrente->push_operand_stack(valor_resultado);
+    frame_corrente->pc += 3;
 }
 
 void Executor::instanceof()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    AreaMetodos& methodArea = AreaMetodos::instancia();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    u2 cpIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    ConstantPoolInfo cpElement = constant_pool[cpIndex - 1];
-    assert(cpElement.tag == ConstClass);
-    string className = formatar_constante(constant_pool, cpIndex);
-    Valor objectrefValue = top_frame->pop_operand_stack();
-    assert(objectrefValue.tipo == REFERENCIA);
-    Valor resultValue = faz_valor_int(0);
-    if (objectrefValue.dados.objeto == NULL) {
-        resultValue.dados.valor_int = 0;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    AreaMetodos& area_metodos = AreaMetodos::instancia();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    u2 indice_cp = (byte1 << 8) | byte2;
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    ConstantPoolInfo elemento_cp = constant_pool[indice_cp - 1];
+    assert(elemento_cp.tag == ConstClass);
+    string nome_classe = formatar_constante(constant_pool, indice_cp);
+    Valor valor_objectref = frame_corrente->pop_operand_stack();
+    assert(valor_objectref.tipo == REFERENCIA);
+    Valor valor_resultado = faz_valor_int(0);
+    if (valor_objectref.dados.objeto == NULL) {
+        valor_resultado.dados.valor_int = 0;
     } else {
-        Objeto* obj = objectrefValue.dados.objeto;
+        Objeto* obj = valor_objectref.dados.objeto;
         if (obj->tipo_objeto() == INSTANCIA_CLASSE) {
-            ClasseInstancia* classInstance = (ClasseInstancia*)obj;
-            ClasseEstatica* class_runtime = classInstance->get_classe_runtime();
+            ClasseInstancia* instancia_classe = (ClasseInstancia*)obj;
+            ClasseEstatica* classe_runtime = instancia_classe->get_classe_runtime();
             bool found = false;
             while (!found) {
-                ArquivoClasse* class_file = class_runtime->get_arquivo_classe();
-                string currClassName = formatar_constante(class_file->constant_pool, class_file->this_class);
-                if (currClassName == className) {
+                ArquivoClasse* arquivo_classe = classe_runtime->get_arquivo_classe();
+                string nome_classe_atual = formatar_constante(arquivo_classe->constant_pool, arquivo_classe->this_class);
+                if (nome_classe_atual == nome_classe) {
                     found = true;
                 } else {
-                    if (class_file->super_class == 0) {
+                    if (arquivo_classe->super_class == 0) {
                         break;
                     } else {
-                        string superClassName = formatar_constante(class_file->constant_pool, class_file->this_class);
-                        class_runtime = methodArea.carregar_classe(superClassName);
+                        string nome_super_classe = formatar_constante(arquivo_classe->constant_pool, arquivo_classe->this_class);
+                        classe_runtime = area_metodos.carregar_classe(nome_super_classe);
                     }
                 }
             }
-            resultValue.dados.valor_int = found ? 1 : 0;
+            valor_resultado.dados.valor_int = found ? 1 : 0;
         } else if (obj->tipo_objeto() == INSTANCIA_STRING) {
-            resultValue.dados.valor_int = (className == "java/lang/String" || className == "java/lang/Object") ? 1 : 0;
+            valor_resultado.dados.valor_int = (nome_classe == "java/lang/String" || nome_classe == "java/lang/Object") ? 1 : 0;
         } else {
-            if (className == "java/lang/Object") {
-                resultValue.dados.valor_int = 1;
+            if (nome_classe == "java/lang/Object") {
+                valor_resultado.dados.valor_int = 1;
             } else {
-                resultValue.dados.valor_int = 0;
+                valor_resultado.dados.valor_int = 0;
             }
         }
     }
-    top_frame->push_operand_stack(resultValue);
-    top_frame->pc += 3;
+    frame_corrente->push_operand_stack(valor_resultado);
+    frame_corrente->pc += 3;
 }
 
 void Executor::monitorenter()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    frame_corrente->pc++;
 }
 
 void Executor::monitorexit()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    top_frame->pc++;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    frame_corrente->pc++;
 }
 
 void Executor::wide()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
     is_wide = true;
-    top_frame->pc++;
+    frame_corrente->pc++;
 }
 
 void Executor::multianewarray()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    ConstantPoolInfo* constant_pool = *(top_frame->get_constant_pool());
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    u1 dimensions = code[3];
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    ConstantPoolInfo* constant_pool = *(frame_corrente->get_constant_pool());
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    u1 dimensions = codigo[3];
     assert(dimensions >= 1);
-    uint16_t classIndex = (byte1 << 8) | byte2;
-    ConstantPoolInfo classCP = constant_pool[classIndex - 1];
-    assert(classCP.tag == ConstClass);
-    ConstClassInfo classInfo = classCP.info.class_info;
-    string className = formatar_constante(constant_pool, classInfo.name_index);
+    uint16_t indice_classe = (byte1 << 8) | byte2;
+    ConstantPoolInfo cp_classe = constant_pool[indice_classe - 1];
+    assert(cp_classe.tag == ConstClass);
+    ConstClassInfo info_classe = cp_classe.info.class_info;
+    string nome_classe = formatar_constante(constant_pool, info_classe.name_index);
 
-    TipoValor value_type;
+    TipoValor tipo_valor;
     int i = 0;
-    while (className[i] == '[')
+    while (nome_classe[i] == '[')
         i++;
-    string multiArranjoType = className.substr(i + 1, className.size() - i - 2);
-    switch (className[i]) {
+    string tipo_multiarranjo = nome_classe.substr(i + 1, nome_classe.size() - i - 2);
+    switch (nome_classe[i]) {
     case 'L':
-        if (multiArranjoType != "java/lang/String") {
-            AreaMetodos& methodArea = AreaMetodos::instancia();
-            methodArea.carregar_classe(multiArranjoType);
+        if (tipo_multiarranjo != "java/lang/String") {
+            AreaMetodos& area_metodos = AreaMetodos::instancia();
+            area_metodos.carregar_classe(tipo_multiarranjo);
         }
-        value_type = REFERENCIA;
+        tipo_valor = REFERENCIA;
         break;
     case 'B':
-        value_type = BYTE;
+        tipo_valor = BYTE;
         break;
     case 'C':
-        value_type = CHAR;
+        tipo_valor = CHAR;
         break;
     case 'D':
-        value_type = DOUBLE;
+        tipo_valor = DOUBLE;
         break;
     case 'F':
-        value_type = FLOAT;
+        tipo_valor = FLOAT;
         break;
     case 'I':
-        value_type = INT;
+        tipo_valor = INT;
         break;
     case 'J':
-        value_type = LONG;
+        tipo_valor = LONG;
         break;
     case 'S':
-        value_type = SHORT;
+        tipo_valor = SHORT;
         break;
     case 'Z':
-        value_type = BOOLEANO;
+        tipo_valor = BOOLEANO;
         break;
     default:
         cerr << "Invalid descriptor in multianewarray" << endl;
         exit(1);
     }
-    stack<int> count;
+    stack<int> contagem;
     for (int i = 0; i < dimensions; i++) {
-        Valor dimLength = top_frame->pop_operand_stack();
-        assert(dimLength.tipo == INT);
-        count.push(dimLength.dados.valor_int);
+        Valor tamanho_dim = frame_corrente->pop_operand_stack();
+        assert(tamanho_dim.tipo == INT);
+        contagem.push(tamanho_dim.dados.valor_int);
     }
-    Arranjo* array = new Arranjo((dimensions > 1) ? REFERENCIA : value_type);
-    popula_multiarranjo(array, value_type, count);
-    Valor arrayValue = faz_valor_referencia(array);
-    top_frame->push_operand_stack(arrayValue);
-    top_frame->pc += 4;
+    Arranjo* arranjo = new Arranjo((dimensions > 1) ? REFERENCIA : tipo_valor);
+    popula_multiarranjo(arranjo, tipo_valor, contagem);
+    Valor valor_arranjo = faz_valor_referencia(arranjo);
+    frame_corrente->push_operand_stack(valor_arranjo);
+    frame_corrente->pc += 4;
 }
 
 void Executor::ifnull()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor referenceValue = top_frame->pop_operand_stack();
-    assert(referenceValue.tipo == REFERENCIA);
-    if (referenceValue.dados.objeto == NULL) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_referencia = frame_corrente->pop_operand_stack();
+    assert(valor_referencia.tipo == REFERENCIA);
+    if (valor_referencia.dados.objeto == NULL) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
         int16_t branch = (byte1 << 8) | byte2;
-        top_frame->pc += branch;
+        frame_corrente->pc += branch;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::ifnonnull()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    Valor referenceValue = top_frame->pop_operand_stack();
-    assert(referenceValue.tipo == REFERENCIA);
-    if (referenceValue.dados.objeto != NULL) {
-        u1* code = top_frame->get_code(top_frame->pc);
-        u1 byte1 = code[1];
-        u1 byte2 = code[2];
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    Valor valor_referencia = frame_corrente->pop_operand_stack();
+    assert(valor_referencia.tipo == REFERENCIA);
+    if (valor_referencia.dados.objeto != NULL) {
+        u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+        u1 byte1 = codigo[1];
+        u1 byte2 = codigo[2];
         int16_t branch = (byte1 << 8) | byte2;
-        top_frame->pc += branch;
+        frame_corrente->pc += branch;
     } else {
-        top_frame->pc += 3;
+        frame_corrente->pc += 3;
     }
 }
 
 void Executor::goto_w()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    u1 byte3 = code[3];
-    u1 byte4 = code[4];
-    int32_t branchOffset = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
-    top_frame->pc += branchOffset;
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    u1 byte3 = codigo[3];
+    u1 byte4 = codigo[4];
+    int32_t deslocamento_desvio = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+    frame_corrente->pc += deslocamento_desvio;
 }
 
 void Executor::jsr_w()
 {
-    PilhaExecucao& stack_frame = PilhaExecucao::instancia();
-    Frame* top_frame = stack_frame.frame_topo();
-    u1* code = top_frame->get_code(top_frame->pc);
-    u1 byte1 = code[1];
-    u1 byte2 = code[2];
-    u1 byte3 = code[3];
-    u1 byte4 = code[4];
-    int32_t branchOffset = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
-    Valor returnAddr = faz_valor_endereco_retorno(top_frame->pc + 5);
-    top_frame->push_operand_stack(returnAddr);
-    top_frame->pc += branchOffset;
-    assert((int32_t)top_frame->pc < (int32_t)top_frame->get_code_size());
+    PilhaExecucao& pilha_execucao = PilhaExecucao::instancia();
+    Frame* frame_corrente = pilha_execucao.frame_topo();
+    u1* codigo = frame_corrente->get_code(frame_corrente->pc);
+    u1 byte1 = codigo[1];
+    u1 byte2 = codigo[2];
+    u1 byte3 = codigo[3];
+    u1 byte4 = codigo[4];
+    int32_t deslocamento_desvio = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+    Valor endereco_retorno = faz_valor_endereco_retorno(frame_corrente->pc + 5);
+    frame_corrente->push_operand_stack(endereco_retorno);
+    frame_corrente->pc += deslocamento_desvio;
+    assert((int32_t)frame_corrente->pc < (int32_t)frame_corrente->get_code_size());
 }
 
 /* ----------------------------------------------------------------------- */
