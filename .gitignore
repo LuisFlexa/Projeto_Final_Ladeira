@@ -1,0 +1,18 @@
+# Artefatos de build
+bin
+bin.exe
+obj/
+*.o
+*.exe
+
+# Saidas geradas em testes
+out.txt
+viewer.txt
+output/
+
+# Editor / SO
+.vscode/
+.idea/
+.clangd
+Thumbs.db
+.DS_Store
