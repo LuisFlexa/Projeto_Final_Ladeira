@@ -1,14 +1,18 @@
-# Build artifacts (versao refatorada - C++)
-leitor-exibidor-refatorado/obj/
-leitor-exibidor-refatorado/bin
-leitor-exibidor-refatorado/bin.exe
-leitor-exibidor-refatorado/out_test/
-leitor-exibidor-refatorado/out_exec/
-
-# Editor / OS
+# Artefatos de build
+bin
+bin.exe
+obj/
 *.o
 *.exe
+
+# Saidas geradas em testes
+out.txt
+viewer.txt
+output/
+
+# Editor / SO
 .vscode/
 .idea/
+.clangd
 Thumbs.db
 .DS_Store

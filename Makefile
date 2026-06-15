@@ -1,4 +1,4 @@
-# Makefile - leitor-exibidor JVM 8
+# Makefile - JVM (leitor-exibidor + motor de execucao)
 #
 # Alvos:
 #   make           gera o binario "bin"
@@ -33,12 +33,28 @@ CXXFLAGS  := $(OPT) $(WARN) $(EXTRA) -I$(DIR_INC)
 #   args              parser de CLI
 #   leitor_classe     parser binario do .class
 #   exibidor_classe   emissor textual estilo jclasslib
+#   objeto_string     objeto String do heap          (motor de execucao)
+#   objeto_arranjo    objeto array do heap           (motor de execucao)
+#   classe_estatica   classe carregada + estaticos   (motor de execucao)
+#   classe_instancia  instancia de objeto + campos   (motor de execucao)
+#   area_metodos      cache de classes carregadas    (motor de execucao)
+#   frame             quadro de execucao de metodo   (motor de execucao)
+#   pilha_execucao    pilha de chamadas (frames)     (motor de execucao)
+#   executor          tabela de opcodes + laco       (motor de execucao)
 #   main              entrada
 FONTES    := \
     $(DIR_SRC)/util_classe.cpp \
     $(DIR_SRC)/args.cpp \
     $(DIR_SRC)/leitor_classe.cpp \
     $(DIR_SRC)/exibidor_classe.cpp \
+    $(DIR_SRC)/objeto_string.cpp \
+    $(DIR_SRC)/objeto_arranjo.cpp \
+    $(DIR_SRC)/classe_estatica.cpp \
+    $(DIR_SRC)/classe_instancia.cpp \
+    $(DIR_SRC)/area_metodos.cpp \
+    $(DIR_SRC)/frame.cpp \
+    $(DIR_SRC)/pilha_execucao.cpp \
+    $(DIR_SRC)/executor.cpp \
     $(DIR_SRC)/main.cpp
 OBJETOS   := $(patsubst $(DIR_SRC)/%.cpp, $(DIR_OBJ)/%.o, $(FONTES))
 
